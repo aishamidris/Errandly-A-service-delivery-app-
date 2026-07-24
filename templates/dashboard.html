@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Errandly{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="text-center mb-5">
+        <h1>Welcome, {{ current_user.name }} 👋</h1>
+        <p class="text-muted">
+            What can Errandly help you with today?
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <h3>🧺 Laundry</h3>
+                    <p>
+                        Get your clothes picked up, washed,
+                        and delivered back to you.
+                    </p>
+
+                    <a href="#" class="btn btn-primary">
+                        Request Laundry
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <h3>🔥 Gas Refill</h3>
+                    <p>
+                        Need a gas refill? Let Errandly
+                        handle it for you.
+                    </p>
+
+                    <a href="#" class="btn btn-primary">
+                        Request Gas
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <h3>📦 Other Errands</h3>
+                    <p>
+                        Tell us what you need and we'll
+                        get it done.
+                    </p>
+
+                    <a href="#" class="btn btn-primary">
+                        Request an Errand
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
