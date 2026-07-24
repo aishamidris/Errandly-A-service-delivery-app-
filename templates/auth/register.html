@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Create Your Errandly Account
+{% endblock %}
+
+
+{% block content %}
+
+<section class="auth-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8">
+                <div class="auth-card">
+                    <div class="text-center mb-4">
+                        <h1>
+                            Create your account
+                        </h1>
+                        <p>
+                            Get more done with Errandly.
+                        </p>
+                    </div>
+                    <form method="POST">
+
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            {{ form.name.label(
+                                class="form-label"
+                            ) }}
+
+                            {{ form.name(
+                                class="form-control",
+                                placeholder="Your full name"
+                            ) }}
+                            {% for error in form.name.errors %}
+                                <small class="text-danger">
+                                    {{ error }}
+                                </small>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.email.label(
+                                class="form-label"
+                            ) }}
+
+                            {{ form.email(
+                                class="form-control",
+                                placeholder="you@example.com"
+                            ) }}
+
+                            {% for error in form.email.errors %}
+
+                                <small class="text-danger">
+                                    {{ error }}
+                                </small>
+                            {% endfor %}
+
+                        </div>
+                        <div class="form-group">
+
+                            {{ form.phone.label(
+                                class="form-label"
+                            ) }}
+
+                            {{ form.phone(
+                                class="form-control",
+                                placeholder="08012345678"
+                            ) }}
+                            {% for error in form.phone.errors %}
+                                <small class="text-danger">
+                                    {{ error }}
+                                </small>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.address.label(
+                                class="form-label"
+                            ) }}
+
+                            {{ form.address(
+                                class="form-control",
+                                placeholder="Your address"
+                            ) }}
+
+                            {% for error in form.address.errors %}
+
+                                <small class="text-danger">
+                                    {{ error }}
+                                </small>
+
+                            {% endfor %}
+
+                        </div>
+                        <div class="form-group">
+                            {{ form.password.label(
+                                class="form-label"
+                            ) }}
+
+                            {{ form.password(
+                                class="form-control",
+                                placeholder="At least 8 characters"
+                            ) }}
+
+                            {% for error in form.password.errors %}
+
+                                <small class="text-danger">
+                                    {{ error }}
+                                </small>
+                            {% endfor %}
+
+                        </div>
+                        <div class="form-group">
+
+                            {{ form.confirm_password.label(
+                                class="form-label"
+                            ) }}
+
+                            {{ form.confirm_password(
+                                class="form-control",
+                                placeholder="Repeat your password"
+                            ) }}
+
+                            {% for error in form.confirm_password.errors %}
+
+                                <small class="text-danger">
+                                    {{ error }}
+                                </small>
+
+                            {% endfor %}
+
+                        </div>
+
+                        {{ form.submit(
+                            class="btn btn-primary-custom w-100"
+                        ) }}
+                    </form>
+                    <div class="auth-footer">
+                        <p>
+                            Already have an account?
+
+                            <a href="{{ url_for('login') }}">
+                                Log in
+                            </a>
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
