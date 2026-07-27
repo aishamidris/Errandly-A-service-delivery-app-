@@ -726,6 +726,118 @@ body {
     font-weight: 600;
 
 }
+
+/* ===========================
+   LAUNDRY SERVICE PAGE
+=========================== */
+
+.service-option{
+    border:none;
+    border-radius:25px;
+    overflow:hidden;
+    transition:.35s;
+    cursor:pointer;
+    height:100%;
+    background:#ffffff;
+}
+
+.service-option:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:0 25px 45px rgba(0,0,0,.12);
+
+}
+
+.service-option .card-body{
+
+    padding:45px 35px;
+
+}
+
+.service-icon{
+
+    width:90px;
+
+    height:90px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    margin:auto;
+
+    margin-bottom:25px;
+
+    font-size:38px;
+
+}
+
+.blue{
+
+    background:#EEF5FF;
+
+    color:#1B74E4;
+
+}
+
+.orange{
+
+    background:#FFF2E5;
+
+    color:#F97316;
+
+}
+
+.gold{
+
+    background:#FFF8DB;
+
+    color:#D4A017;
+
+}
+
+.feature-list{
+
+    list-style:none;
+
+    padding:0;
+
+    margin-top:25px;
+
+}
+
+.feature-list li{
+
+    margin-bottom:12px;
+
+}
+
+.feature-list i{
+
+    color:#28a745;
+
+    margin-right:10px;
+
+}
+
+.select-btn{
+
+    margin-top:30px;
+
+    width:100%;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+}
+
+
 /* =========================
    MOBILE RESPONSIVENESS
 ========================= */
