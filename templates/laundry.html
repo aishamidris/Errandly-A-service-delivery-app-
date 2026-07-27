@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}
+Laundry Service - Errandly
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="text-center mb-5">
+
+        <h1>🧺 Laundry Service</h1>
+
+        <p class="text-muted">
+            Choose your service and add the items you want us to handle.
+        </p>
+
+    </div>
+
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-9">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body p-4">
+
+                    <form method="POST">
+
+                        {{ form.hidden_tag() }}
+
+
+                        <!-- SERVICE TYPE -->
+
+                        <h4 class="mb-3">
+                            1. Choose your service
+                        </h4>
+
+                        <div class="mb-4">
+
+                            {{ form.service_type(
+                                class="form-select",
+                                id="service_type"
+                            ) }}
+
+                        </div>
+
+
+                        <!-- LAUNDRY ITEMS -->
+
+                        <h4 class="mb-3">
+                            2. Add items to your order
+                        </h4>
+
+
+                        <div class="row g-3">
+
+                            {% for item_name, price in laundry_prices["wash_press"].items() %}
+
+                                {% if item_name in form._fields %}
+
+                                    <div class="col-md-6">
+
+                                        <div class="border rounded p-3">
+
+                                            <label
+                                                for="{{ item_name }}"
+                                                class="form-label"
+                                            >
+
+                                                {{ item_name.replace("_", " ").title() }}
+
+                                                <span class="text-muted">
+
+                                                    (₦{{ "{:,}".format(price) }} each)
+
+                                                </span>
+
+                                            </label>
+
+
+                                            {{ form[item_name](
+                                                class="form-control laundry-item",
+                                                id=item_name,
+                                                min="0",
+                                                value="0"
+                                            ) }}
+
+                                        </div>
+
+                                    </div>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <hr class="my-4">
+
+
+                        <!-- PICKUP DATE -->
+
+                        <h4 class="mb-3">
+                            3. Choose your pickup date
+                        </h4>
+
+                        <div class="mb-3">
+
+                            {{ form.pickup_date(
+                                class="form-control",
+                                id="pickup_date"
+                            ) }}
+
+                        </div>
+
+
+                        <div class="alert alert-info">
+
+                            <strong>
+                                Estimated Delivery Date:
+                            </strong>
+
+                            <span id="delivery_date">
+
+                                Select a pickup date
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- TOTAL -->
+
+                        <div class="alert alert-success text-center">
+
+                            <h4>
+
+                                Total:
+
+                                ₦<span id="total_price">
+                                    0
+                                </span>
+
+                            </h4>
+
+                        </div>
+
+
+                        <!-- SUBMIT -->
+
+                        <div class="d-grid">
+
+                            {{ form.submit(
+                                class="btn btn-primary btn-lg",
+                                value="Place Laundry Order"
+                            ) }}
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const laundryPrices =
+        {{ laundry_prices | tojson }};
+
+
+    const serviceType =
+        document.getElementById("service_type");
+
+
+    const laundryItems =
+        document.querySelectorAll(".laundry-item");
+
+
+    const totalPrice =
+        document.getElementById("total_price");
+
+
+    function calculateTotal() {
+
+        const selectedService =
+            serviceType.value;
+
+
+        let total = 0;
+
+
+        laundryItems.forEach(function(item) {
+
+            const itemName =
+                item.name;
+
+
+            const quantity =
+                parseInt(item.value) || 0;
+
+
+            const price =
+                laundryPrices[selectedService]?.[itemName];
+
+
+            if (price) {
+
+                total += quantity * price;
+
+            }
+
+        });
+
+
+        totalPrice.textContent =
+            total.toLocaleString();
+
+    }
+
+
+    laundryItems.forEach(function(item) {
+
+        item.addEventListener(
+            "input",
+            calculateTotal
+        );
+
+    });
+
+
+    serviceType.addEventListener(
+        "change",
+        calculateTotal
+    );
+
+
+    const pickupDate =
+        document.getElementById("pickup_date");
+
+
+    const deliveryDate =
+        document.getElementById("delivery_date");
+
+
+    pickupDate.addEventListener(
+        "change",
+        function() {
+
+            const selectedDate =
+                new Date(this.value);
+
+
+            selectedDate.setDate(
+                selectedDate.getDate() + 3
+            );
+
+
+            const options = {
+
+                year: "numeric",
+
+                month: "long",
+
+                day: "numeric"
+
+            };
+
+
+            deliveryDate.textContent =
+                selectedDate.toLocaleDateString(
+                    "en-US",
+                    options
+                );
+
+        }
+
+    );
+
+
+    calculateTotal();
+
+</script>
+
+{% endblock %}

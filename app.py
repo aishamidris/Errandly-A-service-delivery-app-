@@ -1,9 +1,9 @@
 from flask import Flask, render_template, redirect, url_for, flash, request
-from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User
-from forms import RegisterForm, LoginForm
+from models import db, User, LaundryOrder, OrderItem
+from forms import RegisterForm, LoginForm, LaundryOrderForm
+from datetime import datetime, timedelta
 
 
 app = Flask(__name__)
@@ -41,7 +41,47 @@ def load_user(user_id):
 
     return db.get_or_404(User, int(user_id))
 
+LAUNDRY_PRICES = {
+    "pressing": {
+        "shirts": 150,
+        "trousers": 150,
+        "jeans_sweatpants": 150,
+        "suits": 500,
+        "uniform": 500,
+        "female_wear": 350,
+        "kaftan": 300,
+        "jallabiya_jilbab_veil_hijab": 200,
+        "kiddies_set": 150,
+        "bedsheet": 500,
+        "delicates": 700
+    },
 
+    "wash_press": {
+        "shirts": 250,
+        "trousers": 250,
+        "jeans_sweatpants": 300,
+        "suits_wash": 1000,
+        "suits_wash_starch": 1500,
+        "suits_steam": 5000,
+        "uniform": 1000,
+        "female_wear": 600,
+        "kaftan_starch": 700,
+        "kaftan_set": 500,
+        "jallabiya_jilbab_veil_hijab": 400,
+        "kiddies_set": 400,
+        "towel": 500,
+        "boxers": 200,
+        "singlet": 200,
+        "cap_kube": 2000,
+        "cap_muhadu_a_banki": 1000,
+        "stain_treatment": 1000,
+        "bedsheet": 1000,
+        "duvet": 2000,
+        "small_carpet": 3500,
+        "big_carpet": 6000,
+        "delicates": 1000
+    }
+}
 # =========================
 # ROUTES
 # =========================
@@ -49,9 +89,7 @@ def load_user(user_id):
 
 @app.route("/")
 def home():
-
     return render_template("index.html")
-
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -132,6 +170,49 @@ def logout():
 @login_required
 def dashboard():
     return render_template("dashboard.html")
+
+@app.route("/laundry")
+@login_required
+def laundry():
+
+    return render_template("laundry/service_selection.html")
+
+
+
+@app.route("/laundry/wash-press")
+@login_required
+def wash_press():
+
+    form = LaundryOrderForm()
+
+    return render_template(
+        "laundry/wash_press.html",
+        form=form,
+        laundry_prices=LAUNDRY_PRICES["wash_press"]
+    )
+
+
+@app.route("/laundry/pressing")
+@login_required
+def pressing():
+
+    form = LaundryOrderForm()
+
+    return render_template(
+        "laundry/pressing.html",
+        form=form,
+        laundry_prices=LAUNDRY_PRICES["pressing"]
+    )
+
+
+@app.route("/laundry/subscription")
+@login_required
+def subscription():
+
+    return render_template(
+        "laundry/subscription.html"
+    )
+
 
 
 # =========================

@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+Laundry Services
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5 mt-5">
+
+<div class="text-center mb-5">
+
+<h1 class="display-5 fw-bold">
+
+Laundry Services
+
+</h1>
+
+<p class="lead text-muted">
+
+Fresh clothes. Zero stress.
+
+Choose how you'd like us to help today.
+
+</p>
+
+</div>
+
+<div class="row g-4">
+
+<div class="col-lg-4">
+
+<div class="card service-option">
+
+<div class="card-body text-center">
+
+<div class="service-icon blue">
+
+<i class="fa-solid fa-shirt"></i>
+
+</div>
+
+<h3>
+
+Wash & Press
+
+</h3>
+
+<p>
+
+Professional washing, ironing and doorstep delivery.
+
+</p>
+
+<ul class="feature-list">
+
+<li><i class="fa fa-check"></i>Pickup Included</li>
+
+<li><i class="fa fa-check"></i>Wash & Dry</li>
+
+<li><i class="fa fa-check"></i>Professional Ironing</li>
+
+<li><i class="fa fa-check"></i>Delivery Included</li>
+
+</ul>
+
+<a href="{{ url_for('wash_press') }}"
+
+class="btn btn-primary select-btn">
+
+Select Service
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card service-option">
+
+<div class="card-body text-center">
+
+<div class="service-icon orange">
+
+<i class="fa-solid fa-fire"></i>
+
+</div>
+
+<h3>
+
+Pressing Only
+
+</h3>
+
+<p>
+
+Already washed?
+
+We'll professionally iron your clothes.
+
+</p>
+
+<ul class="feature-list">
+
+<li><i class="fa fa-check"></i>Professional Pressing</li>
+
+<li><i class="fa fa-check"></i>Folded Neatly</li>
+
+<li><i class="fa fa-check"></i>Pickup Available</li>
+
+<li><i class="fa fa-check"></i>Delivery Included</li>
+
+</ul>
+
+<a href="{{ url_for('pressing') }}"
+
+class="btn btn-warning select-btn">
+
+Select Service
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card service-option">
+
+<div class="card-body text-center">
+
+<div class="service-icon gold">
+
+<i class="fa-solid fa-crown"></i>
+
+</div>
+
+<span class="badge bg-warning text-dark mb-3">
+
+BEST VALUE
+
+</span>
+
+<h3>
+
+Monthly Subscription
+
+</h3>
+
+<p>
+
+Weekly pickups with discounted pricing.
+
+</p>
+
+<ul class="feature-list">
+
+<li><i class="fa fa-check"></i>Priority Pickup</li>
+
+<li><i class="fa fa-check"></i>Priority Delivery</li>
+
+<li><i class="fa fa-check"></i>Lower Prices</li>
+
+<li><i class="fa fa-check"></i>Dedicated Manager</li>
+
+</ul>
+
+<a href="{{ url_for('subscription') }}"
+
+class="btn btn-dark select-btn">
+
+View Plans
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}
