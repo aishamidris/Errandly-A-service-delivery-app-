@@ -86,6 +86,30 @@
                             Welcome, {{ current_user.name }}
                         </span>
 
+                        <li class="nav-item">
+
+                            <a
+                                class="nav-link position-relative"
+                                href="{{ url_for('notifications') }}"
+                            >
+                                <i class="fas fa-bell"></i>
+                                Notifications
+                                {% if unread_notifications > 0 %}
+
+                                    <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                    >
+
+                                        {{ unread_notifications }}
+
+                                    </span>
+
+                                {% endif %}
+
+                            </a>
+
+                        </li>
+
                         <a href="{{ url_for('logout') }}"
                         class="btn btn-outline-danger">
                             Logout

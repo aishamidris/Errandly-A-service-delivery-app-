@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+
+{% block title %}
+Errandly | Add Laundry Items
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5" style="margin-top: 90px;">
+
+    <div class="container">
+
+        <!-- Header -->
+        <div class="text-center mb-5">
+
+            <span class="badge bg-primary px-3 py-2 mb-3">
+                STEP 2 OF 3
+            </span>
+
+            <h1 class="fw-bold">
+                Add Your Laundry
+            </h1>
+
+            <p class="text-muted">
+                Select the items you want us to
+                {% if service_type == "pressing" %}
+                    press
+                {% else %}
+                    wash and press
+                {% endif %}
+                .
+            </p>
+
+        </div>
+
+
+        <!-- Order Form -->
+
+        <form method="POST">
+
+            <div class="row g-4">
+
+
+                <!-- ITEMS -->
+
+                <div class="col-lg-8">
+
+                    <div class="card border-0 shadow-sm">
+
+                        <div class="card-body p-4">
+
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                                <div>
+
+                                    <h4 class="fw-bold mb-1">
+                                        Laundry Items
+                                    </h4>
+
+                                    <small class="text-muted">
+                                        Add the items you want us to process.
+                                    </small>
+
+                                </div>
+
+                                <span class="badge bg-light text-dark">
+                                    ₦ Nigerian Naira
+                                </span>
+
+                            </div>
+
+
+                            <div class="row g-3">
+
+                                {% for item_name, price in service_prices.items() %}
+
+                                <div class="col-md-6">
+
+                                    <div class="border rounded-3 p-3 h-100">
+
+                                        <div class="d-flex justify-content-between align-items-start">
+
+                                            <div>
+
+                                                <h6 class="fw-bold mb-1">
+                                                    {{ item_name.replace("_", " ").title() }}
+                                                </h6>
+
+                                                <small class="text-muted">
+                                                    ₦{{ "{:,}".format(price) }} each
+                                                </small>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="d-flex align-items-center mt-3">
+
+                                            <label class="me-2 text-muted">
+                                                Quantity
+                                            </label>
+
+                                            <input
+                                                type="number"
+                                                name="{{ item_name }}"
+                                                class="form-control quantity-input"
+                                                value="0"
+                                                min="0"
+                                                data-price="{{ price }}"
+                                                style="max-width: 100px;"
+                                            >
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ORDER SUMMARY -->
+
+                <div class="col-lg-4">
+
+                    <div class="card border-0 shadow-sm sticky-top"
+                         style="top: 110px;">
+
+                        <div class="card-body p-4">
+
+                            <h4 class="fw-bold mb-4">
+                                Your Order
+                            </h4>
+
+
+                            <div id="order-summary">
+
+                                <p class="text-muted text-center"
+                                   id="empty-message">
+
+                                    Your order is empty.
+
+                                </p>
+
+                            </div>
+
+
+                            <hr>
+
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <span class="fw-bold">
+                                    Total
+                                </span>
+
+                                <span class="fw-bold fs-4 text-primary"
+                                      id="total-price">
+
+                                    ₦0
+
+                                </span>
+
+                            </div>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary w-100 mt-4 py-3"
+                                id="continue-button"
+                                disabled>
+
+                                Continue
+
+                                <i class="fas fa-arrow-right ms-2"></i>
+
+                            </button>
+
+
+                            <a href="{{ url_for('laundry') }}"
+                               class="btn btn-outline-secondary w-100 mt-2">
+
+                                <i class="fas fa-arrow-left me-2"></i>
+
+                                Back
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const quantityInputs =
+        document.querySelectorAll(".quantity-input");
+
+    const totalPrice =
+        document.getElementById("total-price");
+
+    const orderSummary =
+        document.getElementById("order-summary");
+
+    const emptyMessage =
+        document.getElementById("empty-message");
+
+    const continueButton =
+        document.getElementById("continue-button");
+
+
+    function updateOrder() {
+
+        let total = 0;
+
+        let hasItems = false;
+
+        let summaryHTML = "";
+
+
+        quantityInputs.forEach(function (input) {
+
+            const quantity =
+                parseInt(input.value) || 0;
+
+            const price =
+                parseInt(input.dataset.price);
+
+
+            if (quantity > 0) {
+
+                hasItems = true;
+
+                const itemName =
+                    input.name
+                        .replaceAll("_", " ")
+                        .replace(/\b\w/g, letter => letter.toUpperCase());
+
+
+                const subtotal =
+                    quantity * price;
+
+
+                total += subtotal;
+
+
+                summaryHTML += `
+
+                    <div class="d-flex justify-content-between mb-2">
+
+                        <div>
+
+                            <span class="fw-semibold">
+                                ${itemName}
+                            </span>
+
+                            <small class="text-muted d-block">
+                                ${quantity} × ₦${price.toLocaleString()}
+                            </small>
+
+                        </div>
+
+                        <span class="fw-semibold">
+                            ₦${subtotal.toLocaleString()}
+                        </span>
+
+                    </div>
+
+                `;
+
+            }
+
+        });
+
+
+        if (hasItems) {
+
+            orderSummary.innerHTML =
+                summaryHTML;
+
+            continueButton.disabled =
+                false;
+
+        } else {
+
+            orderSummary.innerHTML = `
+                <p class="text-muted text-center">
+                    Your order is empty.
+                </p>
+            `;
+
+            continueButton.disabled =
+                true;
+
+        }
+
+
+        totalPrice.textContent =
+            "₦" + total.toLocaleString();
+
+    }
+
+
+    quantityInputs.forEach(function (input) {
+
+        input.addEventListener(
+            "input",
+            updateOrder
+        );
+
+    });
+
+
+    updateOrder();
+
+});
+
+</script>
+
+{% endblock %}

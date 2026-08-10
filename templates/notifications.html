@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}
+Notifications | Errandly
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5 mt-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>
+                Notifications
+            </h2>
+
+            <p class="text-muted">
+                Stay updated on your laundry orders.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if notifications %}
+
+        {% for notification in notifications %}
+
+        <div class="card shadow-sm border-0 mb-3">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between">
+
+                    <div>
+
+                        <h5 class="mb-1">
+
+                            {{ notification.title }}
+
+                        </h5>
+
+                        <p class="mb-2">
+
+                            {{ notification.message }}
+
+                        </p>
+
+                        <small class="text-muted">
+
+                            {{ notification.created_at.strftime("%d %b %Y %I:%M %p") }}
+
+                        </small>
+
+                    </div>
+
+                    {% if notification.is_read %}
+
+                        <span class="badge bg-secondary">
+
+                            Read
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-primary">
+
+                            New
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body text-center py-5">
+
+                <i class="fa-solid fa-bell-slash fa-3x text-muted mb-3"></i>
+
+                <h4>
+
+                    No Notifications
+
+                </h4>
+
+                <p class="text-muted mb-0">
+
+                    Notifications about your laundry orders will appear here.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

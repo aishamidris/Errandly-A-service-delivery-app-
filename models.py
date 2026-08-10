@@ -2,11 +2,35 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from datetime import datetime
 
-
 db = SQLAlchemy()
 
 
+# ==========================================
+# ORDER STATUS
+# ==========================================
+
+ORDER_STATUS = [
+    "Pending Pickup",
+    "Picked Up",
+    "Verification In Progress",
+    "Awaiting Customer Approval",
+    "Verified",
+    "Washing",
+    "Ironing",
+    "Ready For Payment",
+    "Paid",
+    "Ready For Delivery",
+    "Out For Delivery",
+    "Delivered"
+]
+
+
+# ==========================================
+# USER MODEL
+# ==========================================
+
 class User(UserMixin, db.Model):
+    __tablename__ = "users"
 
     id = db.Column(
         db.Integer,
@@ -45,8 +69,19 @@ class User(UserMixin, db.Model):
         default="customer"
     )
 
+    notifications = db.relationship(
+    "Notification",
+    back_populates="user",
+    cascade="all, delete-orphan"
+)
+
+
+# ==========================================
+# LAUNDRY ORDER
+# ==========================================
 
 class LaundryOrder(db.Model):
+    __tablename__ = "laundry_orders"
 
     id = db.Column(
         db.Integer,
@@ -55,23 +90,14 @@ class LaundryOrder(db.Model):
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey("user.id"),
+        db.ForeignKey("users.id"),
         nullable=False
     )
 
+    # wash_press / pressing / subscription
     service_type = db.Column(
-        db.String(50),
+        db.String(30),
         nullable=False
-    )
-
-    submitted_total = db.Column(
-        db.Integer,
-        nullable=False
-    )
-
-    verified_total = db.Column(
-        db.Integer,
-        nullable=True
     )
 
     pickup_date = db.Column(
@@ -84,47 +110,62 @@ class LaundryOrder(db.Model):
         nullable=False
     )
 
-    verification_status = db.Column(
-        db.String(30),
+    # Customer's calculated total
+    submitted_total = db.Column(
+        db.Integer,
         nullable=False,
-        default="Pending Verification"
+        default=0
     )
 
-    order_status = db.Column(
-        db.String(30),
+    # Manager's verified total
+    verified_total = db.Column(
+        db.Integer,
         nullable=False,
-        default="Pending"
+        default=0
     )
 
     payment_status = db.Column(
-        db.String(30),
+        db.String(20),
         nullable=False,
-        default="Unpaid"
+        default="UNPAID"
+    )
+
+    order_status = db.Column(
+        db.String(40),
+        nullable=False,
+        default=ORDER_STATUS[0]
     )
 
     manager_note = db.Column(
-        db.Text,
-        nullable=True
+        db.Text
+    )
+
+    customer_approved = db.Column(
+        db.Boolean,
+        default=False
     )
 
     created_at = db.Column(
         db.DateTime,
+        nullable=False,
         default=datetime.utcnow
     )
 
     user = db.relationship(
         "User",
-        backref="laundry_orders"
+        backref=db.backref(
+            "laundry_orders",
+            lazy=True
+        )
     )
 
-    items = db.relationship(
-        "OrderItem",
-        backref="order",
-        cascade="all, delete-orphan"
-    )
 
+# ==========================================
+# ORDER ITEMS
+# ==========================================
 
 class OrderItem(db.Model):
+    __tablename__ = "order_items"
 
     id = db.Column(
         db.Integer,
@@ -133,7 +174,7 @@ class OrderItem(db.Model):
 
     order_id = db.Column(
         db.Integer,
-        db.ForeignKey("laundry_order.id"),
+        db.ForeignKey("laundry_orders.id"),
         nullable=False
     )
 
@@ -154,5 +195,61 @@ class OrderItem(db.Model):
 
     verified_quantity = db.Column(
         db.Integer,
-        nullable=True
+        default=0
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow
+    )
+
+    order = db.relationship(
+    "LaundryOrder",
+    backref=db.backref(
+        "order_items",
+        lazy=True,
+        cascade="all, delete-orphan"
+    )
+
+    )
+
+class Notification(db.Model):
+
+    __tablename__ = "notifications"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False
+    )
+
+    title = db.Column(
+        db.String(150),
+        nullable=False
+    )
+
+    message = db.Column(
+        db.Text,
+        nullable=False
+    )
+
+    is_read = db.Column(
+        db.Boolean,
+        default=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
+
+    user = db.relationship(
+        "User",
+        back_populates="notifications"
     )

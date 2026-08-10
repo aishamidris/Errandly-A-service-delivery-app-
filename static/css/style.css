@@ -837,6 +837,73 @@ body {
 
 }
 
+/* =========================================
+   ORDER CARD FOOTER
+========================================= */
+
+.order-footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    width: 100%;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid #eeeeee;
+}
+
+.order-total {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.payment-status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.order-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.order-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.payment-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 90px;
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.payment-badge i {
+    font-size: 9px;
+}
+
+.payment-badge.paid {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.payment-badge.unpaid {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
 
 /* =========================
    MOBILE RESPONSIVENESS

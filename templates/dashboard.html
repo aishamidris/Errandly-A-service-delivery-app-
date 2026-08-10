@@ -8,19 +8,33 @@ Customer Dashboard | Errandly
 
 <div class="container py-5 mt-5">
 
-    <!-- Welcome -->
-    <div class="row mb-4">
+    <!-- =========================================================
+         WELCOME HEADER
+    ========================================================== -->
+
+    <div class="row mb-4 align-items-center">
 
         <div class="col-md-8">
-            <h2>Welcome back, {{ current_user.name }} 👋</h2>
-            <p class="text-muted">
-                Manage all your Errandly services from one place.
+
+            <small class="text-muted">
+                ERRANDLY CUSTOMER PORTAL
+            </small>
+
+            <h2 class="mb-1">
+                Welcome back, {{ current_user.name }} 👋
+            </h2>
+
+            <p class="text-muted mb-0">
+                Manage your services, orders and deliveries from one place.
             </p>
+
         </div>
 
-        <div class="col-md-4 text-end">
 
-            <span class="badge bg-success p-2">
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+
+            <span class="badge bg-success px-3 py-2">
+                <i class="fas fa-user me-1"></i>
                 Customer Account
             </span>
 
@@ -28,19 +42,35 @@ Customer Dashboard | Errandly
 
     </div>
 
-    <!-- Quick Stats -->
+
+    <!-- =========================================================
+         QUICK STATISTICS
+    ========================================================== -->
 
     <div class="row g-4 mb-5">
 
-        <div class="col-md-3">
 
-            <div class="card shadow-sm border-0">
+        <!-- TOTAL ORDERS -->
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card shadow-sm border-0 h-100">
 
                 <div class="card-body">
 
-                    <h6>Total Orders</h6>
+                    <small class="text-muted">
+                        TOTAL ORDERS
+                    </small>
 
-                    <h2>0</h2>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+
+                        <h2 class="mb-0">
+                            {{ total_orders }}
+                        </h2>
+
+                        <i class="fas fa-box fa-2x text-primary opacity-50"></i>
+
+                    </div>
 
                 </div>
 
@@ -48,15 +78,28 @@ Customer Dashboard | Errandly
 
         </div>
 
-        <div class="col-md-3">
 
-            <div class="card shadow-sm border-0">
+        <!-- PENDING -->
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card shadow-sm border-0 h-100">
 
                 <div class="card-body">
 
-                    <h6>Pending</h6>
+                    <small class="text-muted">
+                        ACTIVE ORDERS
+                    </small>
 
-                    <h2 class="text-warning">0</h2>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+
+                        <h2 class="mb-0 text-warning">
+                            {{ pending_orders }}
+                        </h2>
+
+                        <i class="fas fa-clock fa-2x text-warning opacity-50"></i>
+
+                    </div>
 
                 </div>
 
@@ -64,15 +107,28 @@ Customer Dashboard | Errandly
 
         </div>
 
-        <div class="col-md-3">
 
-            <div class="card shadow-sm border-0">
+        <!-- COMPLETED -->
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card shadow-sm border-0 h-100">
 
                 <div class="card-body">
 
-                    <h6>Completed</h6>
+                    <small class="text-muted">
+                        COMPLETED
+                    </small>
 
-                    <h2 class="text-success">0</h2>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+
+                        <h2 class="mb-0 text-success">
+                            {{ completed_orders }}
+                        </h2>
+
+                        <i class="fas fa-circle-check fa-2x text-success opacity-50"></i>
+
+                    </div>
 
                 </div>
 
@@ -80,15 +136,28 @@ Customer Dashboard | Errandly
 
         </div>
 
-        <div class="col-md-3">
 
-            <div class="card shadow-sm border-0">
+        <!-- WALLET -->
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card shadow-sm border-0 h-100">
 
                 <div class="card-body">
 
-                    <h6>Wallet</h6>
+                    <small class="text-muted">
+                        WALLET
+                    </small>
 
-                    <h2>₦0</h2>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+
+                        <h2 class="mb-0">
+                            ₦0
+                        </h2>
+
+                        <i class="fas fa-wallet fa-2x text-secondary opacity-50"></i>
+
+                    </div>
 
                 </div>
 
@@ -98,32 +167,60 @@ Customer Dashboard | Errandly
 
     </div>
 
-    <!-- Services -->
 
-    <h3 class="mb-4">
-        Choose a Service
-    </h3>
+    <!-- =========================================================
+         SERVICES
+    ========================================================== -->
 
-    <div class="row g-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <!-- Laundry -->
+        <div>
+
+            <h3 class="mb-1">
+                Choose a Service
+            </h3>
+
+            <p class="text-muted mb-0">
+                What can Errandly help you with today?
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4 mb-5">
+
+
+        <!-- =====================================================
+             LAUNDRY
+        ====================================================== -->
 
         <div class="col-lg-4">
 
             <div class="card shadow border-0 h-100">
 
-                <div class="card-body text-center">
+                <div class="card-body text-center p-4">
 
                     <i class="fa-solid fa-shirt fa-3x text-primary mb-3"></i>
 
-                    <h4>Laundry Service</h4>
+                    <h4>
+                        Laundry Service
+                    </h4>
 
-                    <p>
-                        Washing, Pressing, Monthly Plans and Pickup.
+                    <p class="text-muted">
+
+                        Washing, pressing, monthly plans and convenient
+                        pickup and delivery.
+
                     </p>
 
-                    <a href="{{ url_for('laundry') }}"
-                       class="btn btn-primary">
+                    <a
+                        href="{{ url_for('laundry') }}"
+                        class="btn btn-primary"
+                    >
+
+                        <i class="fas fa-shirt me-1"></i>
 
                         Order Laundry
 
@@ -135,25 +232,33 @@ Customer Dashboard | Errandly
 
         </div>
 
-        <!-- Gas -->
+
+        <!-- =====================================================
+             GAS
+        ====================================================== -->
 
         <div class="col-lg-4">
 
             <div class="card shadow border-0 h-100">
 
-                <div class="card-body text-center">
+                <div class="card-body text-center p-4">
 
                     <i class="fa-solid fa-fire-flame-curved fa-3x text-danger mb-3"></i>
 
-                    <h4>Gas Refill</h4>
+                    <h4>
+                        Gas Refill
+                    </h4>
 
-                    <p>
+                    <p class="text-muted">
 
                         Book gas pickup, refill and doorstep delivery.
 
                     </p>
 
-                    <a href="#" class="btn btn-danger">
+                    <a
+                        href="#"
+                        class="btn btn-danger"
+                    >
 
                         Coming Soon
 
@@ -165,25 +270,33 @@ Customer Dashboard | Errandly
 
         </div>
 
-        <!-- Errands -->
+
+        <!-- =====================================================
+             ERRANDS
+        ====================================================== -->
 
         <div class="col-lg-4">
 
             <div class="card shadow border-0 h-100">
 
-                <div class="card-body text-center">
+                <div class="card-body text-center p-4">
 
                     <i class="fa-solid fa-person-running fa-3x text-success mb-3"></i>
 
-                    <h4>Errands</h4>
+                    <h4>
+                        Errands
+                    </h4>
 
-                    <p>
+                    <p class="text-muted">
 
                         Shopping, pickups, bill payments and more.
 
                     </p>
 
-                    <a href="#" class="btn btn-success">
+                    <a
+                        href="#"
+                        class="btn btn-success"
+                    >
 
                         Coming Soon
 
@@ -195,25 +308,33 @@ Customer Dashboard | Errandly
 
         </div>
 
-        <!-- Dispatch -->
+
+        <!-- =====================================================
+             DISPATCH
+        ====================================================== -->
 
         <div class="col-lg-4">
 
             <div class="card shadow border-0 h-100">
 
-                <div class="card-body text-center">
+                <div class="card-body text-center p-4">
 
                     <i class="fa-solid fa-motorcycle fa-3x text-dark mb-3"></i>
 
-                    <h4>Pickup & Delivery</h4>
+                    <h4>
+                        Pickup & Delivery
+                    </h4>
 
-                    <p>
+                    <p class="text-muted">
 
                         Send parcels quickly across town.
 
                     </p>
 
-                    <a href="#" class="btn btn-dark">
+                    <a
+                        href="#"
+                        class="btn btn-dark"
+                    >
 
                         Coming Soon
 
@@ -225,25 +346,33 @@ Customer Dashboard | Errandly
 
         </div>
 
-        <!-- Cleaning -->
+
+        <!-- =====================================================
+             CLEANING
+        ====================================================== -->
 
         <div class="col-lg-4">
 
             <div class="card shadow border-0 h-100">
 
-                <div class="card-body text-center">
+                <div class="card-body text-center p-4">
 
                     <i class="fa-solid fa-broom fa-3x text-info mb-3"></i>
 
-                    <h4>Home Cleaning</h4>
+                    <h4>
+                        Home Cleaning
+                    </h4>
 
-                    <p>
+                    <p class="text-muted">
 
                         Schedule professional home and office cleaning.
 
                     </p>
 
-                    <a href="#" class="btn btn-info">
+                    <a
+                        href="#"
+                        class="btn btn-info"
+                    >
 
                         Coming Soon
 
@@ -255,25 +384,33 @@ Customer Dashboard | Errandly
 
         </div>
 
-        <!-- More -->
+
+        <!-- =====================================================
+             MORE SERVICES
+        ====================================================== -->
 
         <div class="col-lg-4">
 
             <div class="card shadow border-0 h-100">
 
-                <div class="card-body text-center">
+                <div class="card-body text-center p-4">
 
                     <i class="fa-solid fa-plus fa-3x text-secondary mb-3"></i>
 
-                    <h4>More Services</h4>
+                    <h4>
+                        More Services
+                    </h4>
 
-                    <p>
+                    <p class="text-muted">
 
                         Exciting new services are on the way.
 
                     </p>
 
-                    <a href="#" class="btn btn-secondary">
+                    <a
+                        href="#"
+                        class="btn btn-secondary"
+                    >
 
                         Coming Soon
 
@@ -287,29 +424,450 @@ Customer Dashboard | Errandly
 
     </div>
 
-    <!-- Recent Orders -->
+
+    <!-- =========================================================
+         RECENT ORDERS
+    ========================================================== -->
 
     <div class="mt-5">
 
-        <h3>
-            Recent Orders
-        </h3>
+        <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <div class="card shadow-sm border-0">
+            <div>
 
-            <div class="card-body text-center">
+                <small class="text-muted">
+                    ORDER MANAGEMENT
+                </small>
 
-                <p class="text-muted">
+                <h3 class="mb-1">
+                    Recent Orders
+                </h3>
 
-                    You haven't placed any orders yet.
-
+                <p class="text-muted mb-0">
+                    Keep track of your laundry orders and payments.
                 </p>
 
             </div>
 
         </div>
 
+
+        {% if orders %}
+
+
+            <div class="row g-4">
+
+
+                {% for order in orders %}
+
+
+                    <!-- =================================================
+                         ORDER CARD
+                    ================================================== -->
+
+                    <div class="col-lg-6">
+
+
+                        <div class="card shadow-sm border-0 h-100">
+
+
+                            <div class="card-body p-4">
+
+
+                                <!-- =====================================
+                                     ORDER HEADER
+                                ====================================== -->
+
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+
+
+                                    <div>
+
+                                        <small class="text-muted">
+                                            ORDER #{{ order.id }}
+                                        </small>
+
+
+                                        <h5 class="mt-1 mb-0">
+
+
+                                            {% if order.service_type == "pressing" %}
+
+                                                Pressing
+
+                                            {% elif order.service_type == "wash_press" %}
+
+                                                Wash & Press
+
+                                            {% else %}
+
+                                                {{ order.service_type
+                                                   |replace("_", " ")
+                                                   |title }}
+
+                                            {% endif %}
+
+
+                                        </h5>
+
+                                    </div>
+
+
+                                    <!-- STATUS BADGE -->
+
+                                    <div class="text-end">
+
+                                        {% if order.order_status == "Pending Pickup" %}
+
+                                            <span class="badge bg-warning text-dark px-3 py-2">
+                                                Pending Pickup
+                                            </span>
+
+
+                                        {% elif order.order_status == "Picked Up" %}
+
+                                            <span class="badge bg-info px-3 py-2">
+                                                Picked Up
+                                            </span>
+
+
+                                        {% elif order.order_status == "Verification In Progress" %}
+
+                                            <span class="badge bg-info px-3 py-2">
+                                                Verification
+                                            </span>
+
+
+                                        {% elif order.order_status == "Awaiting Customer Approval" %}
+
+                                            <span class="badge bg-warning text-dark px-3 py-2">
+                                                Awaiting Approval
+                                            </span>
+
+
+                                        {% elif order.order_status == "Verified" %}
+
+                                            <span class="badge bg-primary px-3 py-2">
+                                                Verified
+                                            </span>
+
+
+                                        {% elif order.order_status == "Washing" %}
+
+                                            <span class="badge bg-primary px-3 py-2">
+                                                Washing
+                                            </span>
+
+
+                                        {% elif order.order_status == "Ironing" %}
+
+                                            <span class="badge bg-primary px-3 py-2">
+                                                Ironing
+                                            </span>
+
+
+                                        {% elif order.order_status == "Ready For Payment" %}
+
+                                            <span class="badge bg-warning text-dark px-3 py-2">
+                                                Ready For Payment
+                                            </span>
+
+
+                                        {% elif order.order_status == "Paid" %}
+
+                                            <span class="badge bg-success px-3 py-2">
+                                                Paid
+                                            </span>
+
+
+                                        {% elif order.order_status == "Ready For Delivery" %}
+
+                                            <span class="badge bg-success px-3 py-2">
+                                                Ready For Delivery
+                                            </span>
+
+
+                                        {% elif order.order_status == "Out For Delivery" %}
+
+                                            <span class="badge bg-info px-3 py-2">
+                                                Out For Delivery
+                                            </span>
+
+
+                                        {% elif order.order_status == "Delivered" %}
+
+                                            <span class="badge bg-success px-3 py-2">
+                                                Delivered
+                                            </span>
+
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary px-3 py-2">
+                                                {{ order.order_status }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+
+                                <hr>
+
+
+                                <!-- =====================================
+                                     ORDER INFORMATION
+                                ====================================== -->
+
+                                <div class="row">
+
+
+                                    <!-- PICKUP -->
+
+                                    <div class="col-6 mb-3">
+
+                                        <small class="text-muted d-block">
+                                            PICKUP
+                                        </small>
+
+                                        <span class="fw-semibold">
+
+                                            {{ order.pickup_date.strftime("%d %b %Y") }}
+
+                                        </span>
+
+                                    </div>
+
+
+                                    <!-- DELIVERY -->
+
+                                    <div class="col-6 mb-3">
+
+                                        <small class="text-muted d-block">
+                                            DELIVERY
+                                        </small>
+
+                                        <span class="fw-semibold">
+
+                                            {{ order.delivery_date.strftime("%d %b %Y") }}
+
+                                        </span>
+
+                                    </div>
+
+
+                                </div>
+
+
+                                <!-- =====================================
+                                     TOTAL + PAYMENT
+                                ====================================== -->
+
+                                <div class="row align-items-end mt-2">
+
+
+                                    <!-- TOTAL -->
+
+                                    <div class="col-6">
+
+                                        <small class="text-muted d-block mb-1">
+                                            ORDER TOTAL
+                                        </small>
+
+                                        <h5 class="mb-0 fw-bold">
+
+                                            ₦{{ "{:,.0f}".format(order.submitted_total) }}
+
+                                        </h5>
+
+                                    </div>
+
+
+                                    <!-- PAYMENT -->
+
+                                    <div class="col-6 text-end">
+
+                                        <small class="text-muted d-block mb-1">
+                                            PAYMENT
+                                        </small>
+
+
+                                        {% if order.payment_status == "PAID" %}
+
+                                            <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2">
+
+                                                <i class="fas fa-circle-check me-1"></i>
+
+                                                Paid
+
+                                            </span>
+
+
+                                        {% else %}
+
+                                            <span class="badge rounded-pill bg-secondary-subtle text-secondary px-3 py-2">
+
+                                                <i class="fas fa-circle me-1"></i>
+
+                                                Unpaid
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+
+                                <hr class="my-4">
+
+
+                                <!-- =====================================
+                                     ORDER ACTION
+                                ====================================== -->
+
+                                <div class="d-flex justify-content-between align-items-center">
+
+
+                                    <small class="text-muted">
+
+                                        Order #{{ order.id }}
+
+                                    </small>
+
+
+                                    <a
+                                        href="{{ url_for('order_details', order_id=order.id) }}"
+                                        class="btn btn-outline-primary btn-sm"
+                                    >
+
+                                        <i class="fas fa-eye me-1"></i>
+
+                                        View Details
+
+                                    </a>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <!-- =====================================================
+                 NO ORDERS
+            ====================================================== -->
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body text-center py-5">
+
+
+                    <i class="fas fa-shirt fa-3x text-muted mb-3"></i>
+
+
+                    <h5>
+                        No orders yet
+                    </h5>
+
+
+                    <p class="text-muted">
+
+                        You haven't placed any laundry orders yet.
+
+                    </p>
+
+
+                    <a
+                        href="{{ url_for('laundry') }}"
+                        class="btn btn-primary"
+                    >
+
+                        <i class="fas fa-shirt me-1"></i>
+
+                        Order Laundry
+
+                        <i class="fas fa-arrow-right ms-2"></i>
+
+                    </a>
+
+
+                </div>
+
+            </div>
+
+
+        {% endif %}
+
     </div>
+
+
+    <!-- =========================================================
+         CUSTOMER HELP
+    ========================================================== -->
+
+    <div class="card shadow-sm border-0 mt-5">
+
+        <div class="card-body p-4">
+
+            <div class="row align-items-center">
+
+
+                <div class="col-md-8">
+
+                    <h5 class="mb-1">
+
+                        <i class="fas fa-circle-question me-2 text-primary"></i>
+
+                        Need help with an order?
+
+                    </h5>
+
+                    <p class="text-muted mb-0">
+
+                        Contact Errandly support if you have questions
+                        about your laundry, payment or delivery.
+
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+
+                    <a
+                        href="#"
+                        class="btn btn-outline-primary"
+                    >
+
+                        Contact Support
+
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
 
 </div>
 

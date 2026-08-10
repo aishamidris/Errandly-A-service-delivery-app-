@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+{% block title %}
+Review Laundry Order | Errandly
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container py-5 mt-5">
+
+    <!-- PAGE HEADER -->
+
+    <div class="text-center mb-5">
+
+        <span class="badge bg-primary mb-3">
+            FINAL STEP
+        </span>
+
+        <h1>
+            Review Your Laundry Order
+        </h1>
+
+        <p class="text-muted">
+            Please check your order carefully before confirming.
+        </p>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- ORDER DETAILS -->
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body p-4">
+
+                    <h4 class="mb-4">
+                        Order Details
+                    </h4>
+
+
+                    <!-- SERVICE -->
+
+                    <div class="mb-4">
+
+                        <small class="text-muted">
+                            SERVICE
+                        </small>
+
+                        <h5 class="mt-1">
+
+                            {% if order.service_type == "pressing" %}
+
+                                Pressing
+
+                            {% elif order.service_type == "wash_press" %}
+
+                                Wash & Press
+
+                            {% else %}
+
+                                {{ order.service_type|replace("_", " ")|title }}
+
+                            {% endif %}
+
+                        </h5>
+
+                    </div>
+
+
+                    <!-- ITEMS -->
+
+                    <div class="table-responsive">
+
+                        <table class="table align-middle">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Item
+                                    </th>
+
+                                    <th class="text-center">
+                                        Quantity
+                                    </th>
+
+                                    <th class="text-end">
+                                        Price
+                                    </th>
+
+                                    <th class="text-end">
+                                        Subtotal
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for item in order["items"] %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ item["item_name"]
+                                            |replace("_", " ")
+                                            |title }}
+                                    </td>
+
+                                    <td class="text-center">
+                                        {{ item["quantity"] }}
+                                    </td>
+
+                                    <td class="text-end">
+                                        ₦{{ "{:,.0f}".format(item["price"]) }}
+                                    </td>
+
+                                    <td class="text-end fw-bold">
+                                        ₦{{ "{:,.0f}".format(item["subtotal"]) }}
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <hr>
+
+
+                    <!-- TOTAL -->
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <strong>
+                            Total
+                        </strong>
+
+                        <h3 class="text-primary mb-0">
+
+                            ₦{{ "{:,.0f}".format(order["total_price"]) }}
+
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CUSTOMER / DELIVERY INFORMATION -->
+
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-body p-4">
+
+                    <h5 class="mb-4">
+                        Pickup & Delivery
+                    </h5>
+
+
+                    <div class="mb-3">
+
+                        <small class="text-muted">
+                            PICKUP DATE
+                        </small>
+
+                        <p class="fw-semibold mb-0">
+
+                            {{ order["pickup_date"] }}
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <small class="text-muted">
+                            EXPECTED DELIVERY
+                        </small>
+
+                        <p class="fw-semibold mb-0">
+
+                            {{ order["delivery_date"] }}
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <small class="text-muted">
+                            CUSTOMER
+                        </small>
+
+                        <p class="fw-semibold mb-0">
+
+                            {{ current_user.name }}
+
+                        </p>
+
+                    </div>
+
+
+                    <div>
+
+                        <small class="text-muted">
+                            PHONE
+                        </small>
+
+                        <p class="fw-semibold mb-0">
+
+                            {{ current_user.phone }}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ADDRESS -->
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-body p-4">
+
+                    <h5 class="mb-3">
+                        Pickup Address
+                    </h5>
+
+                    <p class="text-muted mb-0">
+
+                        {{ current_user.address }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- CONFIRMATION -->
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <form method="POST">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary btn-lg w-100 mb-3">
+
+                            Confirm Laundry Order
+
+                            <i class="fas fa-check ms-2"></i>
+
+                        </button>
+
+                    </form>
+
+
+                    <a
+                        href="{{ url_for('laundry_schedule') }}"
+                        class="btn btn-outline-secondary w-100">
+
+                        Go Back
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

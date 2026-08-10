@@ -1,0 +1,797 @@
+{% extends "base.html" %}
+
+{% block title %}
+Laundry Order #{{ order.id }} | Errandly
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container py-5 mt-5">
+
+    <!-- ================================================== -->
+    <!-- HEADER -->
+    <!-- ================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-5">
+
+        <div>
+
+            <small class="text-muted">
+                ERRANDLY LAUNDRY
+            </small>
+
+            <h2 class="mb-1">
+                Order #{{ order.id }}
+            </h2>
+
+            <p class="text-muted mb-0">
+                View your laundry order and verification details.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="btn btn-outline-secondary"
+        >
+
+            <i class="fas fa-arrow-left me-1"></i>
+
+            Back to Dashboard
+
+        </a>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- STATUS ALERT -->
+    <!-- ================================================== -->
+
+    {% if order.order_status == "Awaiting Customer Approval" %}
+
+        <div class="alert alert-warning border-0 shadow-sm">
+
+            <div class="d-flex">
+
+                <div class="me-3">
+
+                    <i class="fas fa-circle-exclamation fa-2x"></i>
+
+                </div>
+
+                <div>
+
+                    <h5 class="alert-heading">
+                        Your order has been verified
+                    </h5>
+
+                    <p class="mb-0">
+
+                        Our laundry team has checked your items.
+                        Please review the verified quantities and total
+                        below before approving your order.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% elif order.order_status == "Verified" %}
+
+        <div class="alert alert-success border-0 shadow-sm">
+
+            <i class="fas fa-circle-check me-2"></i>
+
+            Your order has been approved and is ready for processing.
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- ================================================== -->
+    <!-- ORDER SUMMARY -->
+    <!-- ================================================== -->
+
+    <div class="row g-4 mb-4">
+
+
+        <!-- SERVICE -->
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <small class="text-muted">
+                        SERVICE
+                    </small>
+
+                    <h5 class="mt-2">
+
+                        {% if order.service_type == "pressing" %}
+
+                            Pressing
+
+                        {% elif order.service_type == "wash_press" %}
+
+                            Wash & Press
+
+                        {% else %}
+
+                            {{ order.service_type
+                               |replace("_", " ")
+                               |title }}
+
+                        {% endif %}
+
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <small class="text-muted">
+                        ORDER STATUS
+                    </small>
+
+                    <div class="mt-2">
+
+                        {% if order.order_status == "Awaiting Customer Approval" %}
+
+                            <span class="badge bg-warning text-dark px-3 py-2">
+
+                                Awaiting Your Approval
+
+                            </span>
+
+                        {% elif order.order_status == "Verified" %}
+
+                            <span class="badge bg-success px-3 py-2">
+
+                                Verified
+
+                            </span>
+
+                        {% elif order.order_status == "Washing" %}
+
+                            <span class="badge bg-primary px-3 py-2">
+
+                                Washing
+
+                            </span>
+
+                        {% elif order.order_status == "Ironing" %}
+
+                            <span class="badge bg-primary px-3 py-2">
+
+                                Ironing
+
+                            </span>
+
+                        {% elif order.order_status == "Ready For Payment" %}
+
+                            <span class="badge bg-warning text-dark px-3 py-2">
+
+                                Ready For Payment
+
+                            </span>
+
+                        {% elif order.order_status == "Paid" %}
+
+                            <span class="badge bg-success px-3 py-2">
+
+                                Paid
+
+                            </span>
+
+                        {% elif order.order_status == "Delivered" %}
+
+                            <span class="badge bg-success px-3 py-2">
+
+                                Delivered
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary px-3 py-2">
+
+                                {{ order.order_status }}
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PAYMENT -->
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <small class="text-muted">
+                        PAYMENT
+                    </small>
+
+                    <div class="mt-2">
+
+                        {% if order.payment_status == "PAID" %}
+
+                            <span class="badge bg-success px-3 py-2">
+
+                                <i class="fas fa-check me-1"></i>
+
+                                Paid
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary px-3 py-2">
+
+                                Unpaid
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- DATES -->
+    <!-- ================================================== -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="row">
+
+
+                <div class="col-md-6">
+
+                    <small class="text-muted">
+                        PICKUP DATE
+                    </small>
+
+                    <h6 class="mt-2">
+
+                        {{ order.pickup_date.strftime("%d %B %Y") }}
+
+                    </h6>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <small class="text-muted">
+                        EXPECTED DELIVERY
+                    </small>
+
+                    <h6 class="mt-2">
+
+                        {{ order.delivery_date.strftime("%d %B %Y") }}
+
+                    </h6>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- LAUNDRY ITEMS -->
+    <!-- ================================================== -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <h4 class="mb-1">
+                Laundry Items
+            </h4>
+
+            <p class="text-muted">
+                Compare the quantities you submitted with the quantities
+                verified by our laundry team.
+            </p>
+
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>
+                                Item
+                            </th>
+
+                            <th>
+                                Price
+                            </th>
+
+                            <th>
+                                Submitted
+                            </th>
+
+                            <th>
+                                Verified
+                            </th>
+
+                            <th class="text-end">
+                                Subtotal
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for item in order.items %}
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+
+                                    {{ item.item_name
+                                       |replace("_", " ")
+                                       |title }}
+
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                ₦{{ "{:,.0f}".format(item.price) }}
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="badge bg-light text-dark border">
+
+                                    {{ item.submitted_quantity }}
+
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                {% if item.verified_quantity is not none %}
+
+                                    {% if item.verified_quantity
+                                       != item.submitted_quantity %}
+
+                                        <span class="badge bg-warning text-dark">
+
+                                            {{ item.verified_quantity }}
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-success">
+
+                                            {{ item.verified_quantity }}
+
+                                        </span>
+
+                                    {% endif %}
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        Not verified
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td class="text-end">
+
+                                {% if item.verified_quantity is not none %}
+
+                                    ₦{{ "{:,.0f}".format(
+                                        item.price * item.verified_quantity
+                                    ) }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- TOTAL COMPARISON -->
+    <!-- ================================================== -->
+
+    <div class="row justify-content-end mb-4">
+
+        <div class="col-lg-5">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <h5 class="mb-4">
+                        Order Total
+                    </h5>
+
+
+                    <!-- SUBMITTED TOTAL -->
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <span class="text-muted">
+                            Your Submitted Total
+                        </span>
+
+                        <strong>
+
+                            ₦{{ "{:,.0f}".format(
+                                order.submitted_total
+                            ) }}
+
+                        </strong>
+
+                    </div>
+
+
+                    <!-- VERIFIED TOTAL -->
+
+                    {% if order.verified_total is not none %}
+
+                        <div class="d-flex justify-content-between mb-3">
+
+                            <span class="text-muted">
+                                Verified Total
+                            </span>
+
+                            <strong class="text-primary fs-4">
+
+                                ₦{{ "{:,.0f}".format(
+                                    order.verified_total
+                                ) }}
+
+                            </strong>
+
+                        </div>
+
+
+                        <hr>
+
+
+                        <!-- DIFFERENCE -->
+
+                        {% set difference =
+                            order.verified_total
+                            - order.submitted_total
+                        %}
+
+
+                        <div class="d-flex justify-content-between">
+
+                            <span class="text-muted">
+
+                                {% if difference > 0 %}
+
+                                    Additional Amount
+
+                                {% elif difference < 0 %}
+
+                                    Amount Reduced
+
+                                {% else %}
+
+                                    Difference
+
+                                {% endif %}
+
+                            </span>
+
+
+                            <strong
+                                class="
+                                    {% if difference > 0 %}
+                                        text-danger
+                                    {% elif difference < 0 %}
+                                        text-success
+                                    {% else %}
+                                        text-muted
+                                    {% endif %}
+                                "
+                            >
+
+                                {% if difference > 0 %}
+
+                                    +₦{{ "{:,.0f}".format(
+                                        difference
+                                    ) }}
+
+                                {% elif difference < 0 %}
+
+                                    -₦{{ "{:,.0f}".format(
+                                        difference|abs
+                                    ) }}
+
+                                {% else %}
+
+                                    ₦0
+
+                                {% endif %}
+
+                            </strong>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- MANAGER NOTE -->
+    <!-- ================================================== -->
+
+    {% if order.manager_note %}
+
+        <div class="alert alert-light border shadow-sm mb-4">
+
+            <h6>
+
+                <i class="fas fa-note-sticky me-2"></i>
+
+                Note from Errandly
+
+            </h6>
+
+            <p class="mb-0">
+
+                {{ order.manager_note }}
+
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- ================================================== -->
+    <!-- CUSTOMER APPROVAL -->
+    <!-- ================================================== -->
+
+    {% if order.order_status == "Awaiting Customer Approval" %}
+
+        <div class="card border-warning shadow-sm mb-4">
+
+            <div class="card-body p-4">
+
+                <div class="row align-items-center">
+
+                    <div class="col-lg-8">
+
+                        <h4>
+                            Review & Approve Your Order
+                        </h4>
+
+                        <p class="text-muted mb-0">
+
+                            Please review the verified quantities and total
+                            above. Once you approve this order, our laundry
+                            team can begin processing it.
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="col-lg-4 mt-3 mt-lg-0">
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'approve_order',
+                                order_id=order.id
+                            ) }}"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn btn-success btn-lg w-100"
+                            >
+
+                                <i class="fas fa-circle-check me-2"></i>
+
+                                Approve Order
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% elif order.order_status == "Verified" %}
+
+        <div class="alert alert-success shadow-sm">
+
+            <i class="fas fa-circle-check me-2"></i>
+
+            <strong>
+                Order Approved
+            </strong>
+
+            <br>
+
+            You have approved the verified quantities.
+            Your laundry order can now proceed to processing.
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- ================================================== -->
+    <!-- STATUS TIMELINE -->
+    <!-- ================================================== -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-4">
+
+            <h5 class="mb-4">
+                Order Progress
+            </h5>
+
+
+            {% set statuses = [
+
+                "Pending Pickup",
+                "Picked Up",
+                "Verification In Progress",
+                "Awaiting Customer Approval",
+                "Verified",
+                "Washing",
+                "Ironing",
+                "Ready For Payment",
+                "Paid",
+                "Ready For Delivery",
+                "Out For Delivery",
+                "Delivered"
+
+            ] %}
+
+
+            <div class="row g-3">
+
+                {% for status in statuses %}
+
+                    <div class="col-6 col-md-4 col-lg-3">
+
+                        {% if status == order.order_status %}
+
+                            <div class="border rounded p-3 text-center bg-primary text-white">
+
+                                <i class="fas fa-circle-check mb-2"></i>
+
+                                <div class="small fw-semibold">
+
+                                    {{ status }}
+
+                                </div>
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="border rounded p-3 text-center">
+
+                                <div class="small text-muted">
+
+                                    {{ status }}
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

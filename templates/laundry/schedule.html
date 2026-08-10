@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+
+{% block title %}
+Errandly | Review Laundry Order
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5" style="margin-top: 90px;">
+
+    <div class="container">
+
+        <!-- HEADER -->
+
+        <div class="text-center mb-5">
+
+            <span class="badge bg-primary px-3 py-2 mb-3">
+                STEP 3 OF 3
+            </span>
+
+            <h1 class="fw-bold">
+                Review Your Order
+            </h1>
+
+            <p class="text-muted">
+                Check your laundry details and choose a pickup date.
+            </p>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <!-- ORDER DETAILS -->
+
+            <div class="col-lg-7">
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-body p-4">
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+
+                            <div>
+
+                                <h4 class="fw-bold mb-1">
+                                    Laundry Summary
+                                </h4>
+
+                                <small class="text-muted">
+                                    {% if order.service_type == "pressing" %}
+                                        Pressing Only
+                                    {% else %}
+                                        Washing & Pressing
+                                    {% endif %}
+                                </small>
+
+                            </div>
+
+                            <span class="badge bg-warning text-dark">
+                                Pending Pickup
+                            </span>
+
+                        </div>
+
+
+                        <!-- ITEMS -->
+
+                        {% for item in order.order_items %}
+
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+
+                            <div>
+
+                                <h6 class="fw-semibold mb-1">
+
+                                    {{ item.item_name
+                                       .replace("_", " ")
+                                       .title() }}
+
+                                </h6>
+
+                                <small class="text-muted">
+
+                                    {{ item.quantity }}
+                                    ×
+                                    ₦{{ "{:,}".format(item.price) }}
+
+                                </small>
+
+                            </div>
+
+
+                            <strong>
+
+                                ₦{{ "{:,}".format(
+                                    item.quantity * item.price
+                                ) }}
+
+                            </strong>
+
+                        </div>
+
+                        {% endfor %}
+
+
+                        <!-- TOTAL -->
+
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+
+                            <h5 class="fw-bold">
+                                Total
+                            </h5>
+
+                            <h4 class="fw-bold text-primary">
+
+                                ₦{{ "{:,}".format(order.total_price) }}
+
+                            </h4>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PICKUP -->
+
+            <div class="col-lg-5">
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-body p-4">
+
+                        <h4 class="fw-bold mb-4">
+                            Schedule Pickup
+                        </h4>
+
+
+                        <form method="POST">
+
+
+                            <div class="mb-4">
+
+                                <label
+                                    for="pickup_date"
+                                    class="form-label fw-semibold">
+
+                                    Pickup Date
+
+                                </label>
+
+
+                                <input
+                                    type="date"
+                                    name="pickup_date"
+                                    id="pickup_date"
+                                    class="form-control form-control-lg"
+                                    required
+                                >
+
+                                <small class="text-muted">
+
+                                    Choose the day you want
+                                    Errandly to pick up your laundry.
+
+                                </small>
+
+                            </div>
+
+
+                            <!-- DELIVERY DATE -->
+
+                            <div class="bg-light rounded-3 p-3 mb-4">
+
+                                <div class="d-flex justify-content-between">
+
+                                    <span class="text-muted">
+
+                                        Estimated Delivery
+
+                                    </span>
+
+                                    <strong id="delivery-date">
+
+                                        Select pickup date
+
+                                    </strong>
+
+                                </div>
+
+                                <small class="text-muted">
+
+                                    Delivery is scheduled
+                                    3 days after pickup.
+
+                                </small>
+
+                            </div>
+
+
+                            <!-- PLACE ORDER -->
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-lg w-100">
+
+                                Place Laundry Order
+
+                                <i class="fas fa-check ms-2"></i>
+
+                            </button>
+
+
+                            <a
+                                href="{{ url_for(
+                                    'laundry_items',
+                                    service_type=order.service_type
+                                ) }}"
+                                class="btn btn-outline-secondary w-100 mt-2">
+
+                                <i class="fas fa-arrow-left me-2"></i>
+
+                                Edit Items
+
+                            </a>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const pickupInput =
+        document.getElementById("pickup_date");
+
+    const deliveryDisplay =
+        document.getElementById("delivery-date");
+
+
+    // Don't allow dates in the past
+
+    const today =
+        new Date().toISOString().split("T")[0];
+
+    pickupInput.min = today;
+
+
+    pickupInput.addEventListener("change", function () {
+
+        if (!this.value) {
+
+            deliveryDisplay.textContent =
+                "Select pickup date";
+
+            return;
+
+        }
+
+
+        const pickupDate =
+            new Date(this.value + "T00:00:00");
+
+
+        pickupDate.setDate(
+            pickupDate.getDate() + 3
+        );
+
+
+        const options = {
+            weekday: "short",
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        };
+
+
+        deliveryDisplay.textContent =
+            pickupDate.toLocaleDateString(
+                "en-NG",
+                options
+            );
+
+    });
+
+});
+
+</script>
+
+{% endblock %}

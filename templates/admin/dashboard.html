@@ -1,0 +1,747 @@
+{% extends "base.html" %}
+
+{% block title %}
+Admin Dashboard | Errandly
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5 mt-5">
+
+    <!-- ========================= -->
+    <!-- HEADER -->
+    <!-- ========================= -->
+
+    <div class="d-flex justify-content-between align-items-center mb-5">
+
+        <div>
+
+            <small class="text-muted">
+                ERRANDLY MANAGEMENT
+            </small>
+
+            <h2 class="mb-1">
+                Admin Dashboard
+            </h2>
+
+            <p class="text-muted mb-0">
+                Manage laundry orders, customers, payments and deliveries.
+            </p>
+
+        </div>
+
+        <span class="badge bg-dark px-3 py-2">
+            {{ current_user.role|title }}
+        </span>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- STATISTICS -->
+    <!-- ========================= -->
+
+    <div class="row g-4 mb-5">
+
+        <!-- TOTAL ORDERS -->
+
+        <div class="col-md-6 col-lg">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        TOTAL ORDERS
+                    </small>
+
+                    <h2 class="mt-2 mb-0">
+                        {{ total_orders }}
+                    </h2>
+
+                    <small class="text-muted">
+                        All laundry orders
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PENDING PICKUP -->
+
+        <div class="col-md-6 col-lg">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        PENDING PICKUP
+                    </small>
+
+                    <h2 class="mt-2 mb-0 text-warning">
+                        {{ pending_orders }}
+                    </h2>
+
+                    <small class="text-muted">
+                        Orders awaiting pickup
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- VERIFICATION -->
+
+        <div class="col-md-6 col-lg">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        VERIFICATION
+                    </small>
+
+                    <h2 class="mt-2 mb-0 text-info">
+                        {{ verification_orders }}
+                    </h2>
+
+                    <small class="text-muted">
+                        Orders requiring verification
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- READY FOR PAYMENT -->
+
+        <div class="col-md-6 col-lg">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        READY FOR PAYMENT
+                    </small>
+
+                    <h2 class="mt-2 mb-0 text-primary">
+                        {{ ready_for_payment }}
+                    </h2>
+
+                    <small class="text-muted">
+                        Awaiting customer payment
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- COMPLETED -->
+
+        <div class="col-md-6 col-lg">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        DELIVERED
+                    </small>
+
+                    <h2 class="mt-2 mb-0 text-success">
+                        {{ completed_orders }}
+                    </h2>
+
+                    <small class="text-muted">
+                        Successfully delivered
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- MANAGEMENT SHORTCUTS -->
+    <!-- ========================= -->
+
+    <h4 class="mb-4">
+        Management
+    </h4>
+
+    <div class="row g-4 mb-5">
+
+        <!-- LAUNDRY ORDERS -->
+
+        <div class="col-lg-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <i class="fa-solid fa-shirt fa-2x text-primary mb-3"></i>
+
+                    <h4>
+                        Laundry Orders
+                    </h4>
+
+                    <p class="text-muted">
+                        View and manage customer laundry orders,
+                        verify items and update order statuses.
+                    </p>
+
+                    <a href="{{ url_for('admin_customers') }}"
+                        class="btn btn-success">
+                            Manage Customers
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CUSTOMERS -->
+
+        <div class="col-lg-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <i class="fa-solid fa-users fa-2x text-success mb-3"></i>
+
+                    <h4>
+                        Customers
+                    </h4>
+
+                    <p class="text-muted">
+                        View registered customers and their
+                        laundry order history.
+                    </p>
+
+                    <button
+                        class="btn btn-success"
+                        type="button"
+                        disabled>
+
+                        Coming Soon
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PAYMENTS -->
+
+        <div class="col-lg-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <i class="fa-solid fa-credit-card fa-2x text-warning mb-3"></i>
+
+                    <h4>
+                        Payments
+                    </h4>
+
+                    <p class="text-muted">
+                        Monitor customer payments and outstanding
+                        laundry balances.
+                    </p>
+
+                    <button
+                        class="btn btn-warning"
+                        type="button"
+                        disabled>
+
+                        Coming Soon
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- ORDERS -->
+    <!-- ========================= -->
+
+    <div id="orders">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+
+                <h3 class="mb-1">
+                    Recent Orders
+                </h3>
+
+                <p class="text-muted mb-0">
+                    Manage incoming customer laundry orders.
+                </p>
+
+            </div>
+
+            <span class="badge bg-light text-dark border px-3 py-2">
+                {{ total_orders }} Orders
+            </span>
+
+        </div>
+
+        <form method="GET" class="row g-3 mb-4">
+
+                <div class="col-md-6">
+
+                    <input
+                        type="text"
+                        name="search"
+                        class="form-control"
+                        placeholder="Search customer name or phone..."
+                        value="{{ search }}"
+                    >
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <select
+                        name="status"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Statuses
+                        </option>
+
+                        {% for s in order_statuses %}
+
+                            <option
+                                value="{{ s }}"
+                                {% if status == s %}selected{% endif %}
+                            >
+                                {{ s }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2 d-grid">
+
+                    <button
+                        class="btn btn-primary"
+                        type="submit"
+                    >
+
+                        <i class="fas fa-search me-2"></i>
+
+                        Search
+
+                    </button>
+
+                </div>
+
+        </form>
+
+        {% if orders %}
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="table-responsive">
+
+                    <table class="table align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>
+                                    Order
+                                </th>
+
+                                <th>
+                                    Customer
+                                </th>
+
+                                <th>
+                                    Service
+                                </th>
+
+                                <th>
+                                    Pickup
+                                </th>
+
+                                <th>
+                                    Delivery
+                                </th>
+
+                                <th>
+                                    Total
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Payment
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for order in orders %}
+
+                            <tr>
+
+                                <!-- ORDER ID -->
+
+                                <td>
+
+                                    <strong>
+                                        #{{ order.id }}
+                                    </strong>
+
+                                    <br>
+
+                                    <small class="text-muted">
+
+                                        {% if order.created_at %}
+
+                                            {{ order.created_at.strftime("%d %b %Y") }}
+
+                                        {% endif %}
+
+                                    </small>
+
+                                </td>
+
+
+                                <!-- CUSTOMER -->
+
+                                <td>
+
+                                    <strong>
+                                        {{ order.user.name }}
+                                    </strong>
+
+                                    <br>
+
+                                    <small class="text-muted">
+                                        {{ order.user.phone }}
+                                    </small>
+
+                                </td>
+
+
+                                <!-- SERVICE -->
+
+                                <td>
+
+                                    {% if order.service_type == "pressing" %}
+
+                                        <span class="fw-semibold">
+                                            Pressing
+                                        </span>
+
+                                    {% elif order.service_type == "wash_press" %}
+
+                                        <span class="fw-semibold">
+                                            Wash & Press
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="fw-semibold">
+
+                                            {{ order.service_type
+                                               |replace("_", " ")
+                                               |title }}
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- PICKUP -->
+
+                                <td>
+
+                                    {{ order.pickup_date.strftime("%d %b %Y") }}
+
+                                </td>
+
+
+                                <!-- DELIVERY -->
+
+                                <td>
+
+                                    {{ order.delivery_date.strftime("%d %b %Y") }}
+
+                                </td>
+
+
+                                <!-- TOTAL -->
+
+                                <td>
+
+                                    <strong>
+                                        ₦{{ "{:,.0f}".format(order.submitted_total) }}
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- ORDER STATUS -->
+
+                                <td>
+
+                                    {% if order.order_status == "Pending Pickup" %}
+
+                                        <span class="badge bg-warning text-dark">
+                                            Pending Pickup
+                                        </span>
+
+                                    {% elif order.order_status == "Picked Up" %}
+
+                                        <span class="badge bg-info">
+                                            Picked Up
+                                        </span>
+
+                                    {% elif order.order_status == "Verification In Progress" %}
+
+                                        <span class="badge bg-info">
+                                            Verification
+                                        </span>
+
+                                    {% elif order.order_status == "Awaiting Customer Approval" %}
+
+                                        <span class="badge bg-warning text-dark">
+                                            Awaiting Approval
+                                        </span>
+
+                                    {% elif order.order_status == "Verified" %}
+
+                                        <span class="badge bg-primary">
+                                            Verified
+                                        </span>
+
+                                    {% elif order.order_status == "Washing" %}
+
+                                        <span class="badge bg-primary">
+                                            Washing
+                                        </span>
+
+                                    {% elif order.order_status == "Ironing" %}
+
+                                        <span class="badge bg-primary">
+                                            Ironing
+                                        </span>
+
+                                    {% elif order.order_status == "Ready For Payment" %}
+
+                                        <span class="badge bg-warning text-dark">
+                                            Ready For Payment
+                                        </span>
+
+                                    {% elif order.order_status == "Paid" %}
+
+                                        <span class="badge bg-success">
+                                            Paid
+                                        </span>
+
+                                    {% elif order.order_status == "Ready For Delivery" %}
+
+                                        <span class="badge bg-success">
+                                            Ready For Delivery
+                                        </span>
+
+                                    {% elif order.order_status == "Out For Delivery" %}
+
+                                        <span class="badge bg-info">
+                                            Out For Delivery
+                                        </span>
+
+                                    {% elif order.order_status == "Delivered" %}
+
+                                        <span class="badge bg-success">
+                                            Delivered
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-secondary">
+                                            {{ order.order_status }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- PAYMENT STATUS -->
+
+                                <td>
+
+                                    {% if order.payment_status == "PAID" %}
+
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-circle-check me-1"></i>
+                                            Paid
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-circle me-1"></i>
+                                            Unpaid
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- ACTION -->
+
+                                <td>
+
+                                    <a
+                                        href="{{ url_for('admin_order_details', order_id=order.id) }}"
+                                        class="btn btn-sm btn-outline-primary">
+
+                                        <i class="fas fa-eye me-1"></i>
+
+                                        Open
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+        {% else %}
+
+            <!-- NO ORDERS -->
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center py-5">
+
+                    <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+
+                    <h5>
+                        No orders yet
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Customer orders will appear here.
+                    </p>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- ADMIN INFORMATION -->
+    <!-- ========================= -->
+
+    <div class="card border-0 shadow-sm mt-5">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex align-items-start">
+
+                <i class="fa-solid fa-circle-info
+                          text-primary
+                          fa-lg
+                          me-3
+                          mt-1"></i>
+
+                <div>
+
+                    <h5 class="mb-2">
+                        Errandly Administration
+                    </h5>
+
+                    <p class="text-muted mb-0">
+
+                        From this dashboard you can monitor customer
+                        laundry orders. The next stage will allow you
+                        to open individual orders, verify the actual
+                        clothes received, correct quantities, update
+                        order statuses and eventually manage payments
+                        and deliveries.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

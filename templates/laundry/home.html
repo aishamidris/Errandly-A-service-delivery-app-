@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block title %}
+Laundry Services | Errandly
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5" style="margin-top: 80px;">
+
+    <div class="container py-5">
+
+        <!-- Header -->
+
+        <div class="text-center mb-5">
+
+            <span class="badge bg-primary px-3 py-2 mb-3">
+                ERRANDLY LAUNDRY
+            </span>
+
+            <h1 class="fw-bold display-5">
+                How can we help with your laundry?
+            </h1>
+
+            <p class="text-muted fs-5 mt-3">
+                Choose the service that works best for you.
+            </p>
+
+        </div>
+
+
+        <!-- Service Cards -->
+
+        <div class="row g-4 justify-content-center">
+
+
+            <!-- PRESSING ONLY -->
+
+            <div class="col-lg-4 col-md-6">
+
+                <div class="card h-100 border-0 shadow-sm">
+
+                    <div class="card-body p-4 text-center">
+
+                        <div
+                            class="rounded-circle bg-primary bg-opacity-10
+                                   d-flex align-items-center justify-content-center
+                                   mx-auto mb-4"
+                            style="width:80px;height:80px;"
+                        >
+
+                            <i class="fa-solid fa-shirt text-primary fs-2"></i>
+
+                        </div>
+
+
+                        <h3 class="fw-bold">
+                            Pressing Only
+                        </h3>
+
+
+                        <p class="text-muted">
+
+                            Your clothes are already washed?
+
+                            Let our professionals press and iron
+                            them perfectly.
+
+                        </p>
+
+
+                        <ul class="list-unstyled text-start mt-4">
+
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check text-success me-2"></i>
+                                Professional ironing
+                            </li>
+
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check text-success me-2"></i>
+                                Neatly folded clothes
+                            </li>
+
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check text-success me-2"></i>
+                                Pickup & delivery
+                            </li>
+
+                        </ul>
+
+
+                        <a
+                            href="{{ url_for('laundry_items', service_type='pressing') }}"
+                            class="btn btn-primary w-100 mt-3"
+                        >
+
+                            Choose Pressing
+
+                            <i class="fa-solid fa-arrow-right ms-2"></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- WASH & PRESS -->
+
+            <div class="col-lg-4 col-md-6">
+
+                <div class="card h-100 border-0 shadow shadow-sm">
+
+                    <div class="card-body p-4 text-center">
+
+                        <div
+                            class="rounded-circle bg-success bg-opacity-10
+                                   d-flex align-items-center justify-content-center
+                                   mx-auto mb-4"
+                            style="width:80px;height:80px;"
+                        >
+
+                            <i class="fa-solid fa-soap text-success fs-2"></i>
+
+                        </div>
+
+
+                        <span class="badge bg-success mb-2">
+                            MOST POPULAR
+                        </span>
+
+
+                        <h3 class="fw-bold">
+                            Wash & Press
+                        </h3>
+
+
+                        <p class="text-muted">
+
+                            We'll pick up your clothes,
+                            wash them, dry them and press them
+                            beautifully.
+
+                        </p>
+
+
+                        <ul class="list-unstyled text-start mt-4">
+
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check text-success me-2"></i>
+                                Professional washing
+                            </li>
+
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check text-success me-2"></i>
+                                Ironing & finishing
+                            </li>
+
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check text-success me-2"></i>
+                                Pickup & delivery
+                            </li>
+
+                        </ul>
+
+
+                        <a
+                            href="{{ url_for('laundry_items', service_type='wash_press') }}"
+                            class="btn btn-success w-100 mt-3"
+                        >
+
+                            Choose Wash & Press
+
+                            <i class="fa-solid fa-arrow-right ms-2"></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- MONTHLY SUBSCRIPTION -->
+
+            <div class="col-lg-4 col-md-6">
+
+                <div class="card h-100 border-0 shadow-sm">
+
+                    <div class="card-body p-4 text-center">
+
+                        <div
+                            class="rounded-circle bg-warning bg-opacity-10
+                                   d-flex align-items-center justify-content-center
+                                   mx-auto mb-4"
+                            style="width:80px;height:80px;"
+                        >
+
+                            <i class="fa-solid fa-calendar-days text-warning fs-2"></i>
+
+                        </div>
+
+
+                        <h3 class="fw-bold">
+                            Monthly Subscription
+                        </h3>
+
+
+                        <p class="text-muted">
+
+                            Regular laundry?
+
+                            Subscribe monthly and enjoy
+                            scheduled pickups and special pricing.
+
+                        </p>
+
+
+                        <ul class="list-unstyled text-start mt-4">
+
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check text-success me-2"></i>
+                                Scheduled weekly pickups
+                            </li>
+
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check text-success me-2"></i>
+                                Priority service
+                            </li>
+
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check text-success me-2"></i>
+                                Convenient monthly billing
+                            </li>
+
+                        </ul>
+
+
+                        <a
+                            href="#"
+                            class="btn btn-warning w-100 mt-3"
+                        >
+
+                            View Plans
+
+                            <i class="fa-solid fa-arrow-right ms-2"></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

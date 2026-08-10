@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ customer.name }} | Customer Profile
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5 mt-5">
+
+    <!-- HEADER -->
+
+    <div class="d-flex justify-content-between align-items-center mb-5">
+
+        <div>
+
+            <small class="text-muted">
+                CUSTOMER PROFILE
+            </small>
+
+            <h2 class="mb-1">
+
+                {{ customer.name }}
+
+            </h2>
+
+            <p class="text-muted">
+
+                Customer information and laundry history.
+
+            </p>
+
+        </div>
+
+        <a href="{{ url_for('admin_customers') }}"
+           class="btn btn-outline-secondary">
+
+            <i class="fas fa-arrow-left me-2"></i>
+
+            Back
+
+        </a>
+
+    </div>
+
+    <div class="row g-4 mb-5">
+
+    <div class="col-lg-6">
+
+        <div class="card shadow-sm border-0 h-100">
+
+            <div class="card-body">
+
+                <h4 class="mb-4">
+                    Customer Information
+                </h4>
+
+                <p>
+                    <strong>Name:</strong><br>
+                    {{ customer.name }}
+                </p>
+
+                <p>
+                    <strong>Email:</strong><br>
+                    {{ customer.email }}
+                </p>
+
+                <p>
+                    <strong>Phone:</strong><br>
+                    {{ customer.phone }}
+                </p>
+
+                <p>
+                    <strong>Address:</strong><br>
+                    {{ customer.address }}
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-6">
+
+    <div class="card shadow-sm border-0 h-100">
+
+        <div class="card-body">
+
+            <h4 class="mb-4">
+
+                Statistics
+
+            </h4>
+
+            <div class="row text-center">
+
+                <div class="col-6 mb-4">
+
+                    <h2>
+
+                        {{ total_orders }}
+
+                    </h2>
+
+                    <small class="text-muted">
+
+                        Orders
+
+                    </small>
+
+                </div>
+
+                <div class="col-6 mb-4">
+
+                    <h2 class="text-warning">
+
+                        {{ pending_orders }}
+
+                    </h2>
+
+                    <small class="text-muted">
+
+                        Pending
+
+                    </small>
+
+                </div>
+
+                <div class="col-6">
+
+                    <h2 class="text-success">
+
+                        {{ completed_orders }}
+
+                    </h2>
+
+                    <small class="text-muted">
+
+                        Delivered
+
+                    </small>
+
+                </div>
+
+                <div class="col-6">
+
+                    <h2 class="text-primary">
+
+                        ₦{{ "{:,.0f}".format(total_spent) }}
+
+                    </h2>
+
+                    <small class="text-muted">
+
+                        Total Paid
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+<div class="card shadow-sm border-0">
+
+    <div class="card-body">
+
+        <h4 class="mb-4">
+
+            Order History
+
+        </h4>
+
+        {% if orders %}
+
+        <div class="table-responsive">
+
+            <table class="table align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Order</th>
+
+                        <th>Pickup</th>
+
+                        <th>Status</th>
+
+                        <th>Total</th>
+
+                        <th></th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for order in orders %}
+
+                    <tr>
+
+                        <td>
+
+                            #{{ order.id }}
+
+                        </td>
+
+                        <td>
+
+                            {{ order.pickup_date.strftime("%d %b %Y") }}
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge bg-primary">
+
+                                {{ order.order_status }}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            ₦{{ "{:,.0f}".format(order.submitted_total) }}
+
+                        </td>
+
+                        <td>
+
+                            <a href="{{ url_for('admin_order_details',
+                                                order_id=order.id) }}"
+                               class="btn btn-sm btn-outline-primary">
+
+                                Open
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="alert alert-light mb-0">
+
+            This customer has not placed any orders yet.
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</div>
+
+{% endblock %}

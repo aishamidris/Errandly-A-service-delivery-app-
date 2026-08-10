@@ -1,0 +1,695 @@
+{% extends "base.html" %}
+
+{% block title %}
+Order #{{ order.id }} | Admin | Errandly
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5 mt-5">
+
+    <!-- HEADER -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <small class="text-muted">
+                ERRANDLY MANAGEMENT
+            </small>
+
+            <h2 class="mb-1">
+                Laundry Order #{{ order.id }}
+            </h2>
+
+            <p class="text-muted mb-0">
+                Review and verify customer laundry items.
+            </p>
+
+        </div>
+
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="btn btn-outline-secondary">
+
+            <i class="fas fa-arrow-left me-1"></i>
+
+            Back to Orders
+
+        </a>
+
+    </div>
+
+
+    <!-- CUSTOMER + ORDER INFORMATION -->
+
+    <div class="row g-4 mb-4">
+
+        <!-- CUSTOMER -->
+
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <h5 class="mb-4">
+
+                        <i class="fas fa-user me-2"></i>
+
+                        Customer Information
+
+                    </h5>
+
+
+                    <div class="mb-3">
+
+                        <small class="text-muted">
+                            NAME
+                        </small>
+
+                        <div class="fw-semibold">
+                            {{ order.user.name }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <small class="text-muted">
+                            PHONE
+                        </small>
+
+                        <div class="fw-semibold">
+                            {{ order.user.phone }}
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        <small class="text-muted">
+                            ADDRESS
+                        </small>
+
+                        <div class="fw-semibold">
+                            {{ order.user.address }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ORDER INFORMATION -->
+
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <h5 class="mb-4">
+
+                        <i class="fas fa-box me-2"></i>
+
+                        Order Information
+
+                    </h5>
+
+
+                    <div class="row">
+
+                        <div class="col-6 mb-3">
+
+                            <small class="text-muted">
+                                SERVICE
+                            </small>
+
+                            <div class="fw-semibold">
+
+                                {% if order.service_type == "pressing" %}
+
+                                    Pressing
+
+                                {% elif order.service_type == "wash_press" %}
+
+                                    Wash & Press
+
+                                {% else %}
+
+                                    {{ order.service_type
+                                       |replace("_", " ")
+                                       |title }}
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-6 mb-3">
+
+                            <small class="text-muted">
+                                STATUS
+                            </small>
+
+                            <div>
+
+                                <span class="badge bg-warning text-dark">
+
+                                    {{ order.order_status }}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-6">
+
+                            <small class="text-muted">
+                                PICKUP DATE
+                            </small>
+
+                            <div class="fw-semibold">
+
+                                {{ order.pickup_date.strftime("%d %b %Y") }}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-6">
+
+                            <small class="text-muted">
+                                DELIVERY DATE
+                            </small>
+
+                            <div class="fw-semibold">
+
+                                {{ order.delivery_date.strftime("%d %b %Y") }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ITEMS -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <div>
+
+                    <h4 class="mb-1">
+                        Laundry Items
+                    </h4>
+
+                    <p class="text-muted mb-0">
+                        Compare submitted quantities with the actual items received.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form method="POST">
+
+                <div class="table-responsive">
+
+                    <table class="table align-middle">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>
+                                    Item
+                                </th>
+
+                                <th>
+                                    Price
+                                </th>
+
+                                <th>
+                                    Submitted
+                                </th>
+
+                                <th style="width: 180px;">
+                                    Verified Quantity
+                                </th>
+
+                                <th>
+                                    Verified Subtotal
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for item in order.items %}
+
+                            <tr>
+
+                                <td>
+
+                                    <strong>
+
+                                        {{ item.item_name
+                                           |replace("_", " ")
+                                           |title }}
+
+                                    </strong>
+
+                                </td>
+
+
+                                <td>
+
+                                    ₦{{ "{:,.0f}".format(item.price) }}
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="badge bg-light text-dark border">
+
+                                        {{ item.submitted_quantity }}
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <input
+                                        type="number"
+                                        name="verified_quantity_{{ item.id }}"
+                                        class="form-control"
+                                        min="0"
+                                        value="{{ item.verified_quantity
+                                                 if item.verified_quantity is not none
+                                                 else item.submitted_quantity }}"
+                                    >
+
+                                </td>
+
+
+                                <td>
+
+                                    {% if item.verified_quantity is not none %}
+
+                                        ₦{{ "{:,.0f}".format(
+                                            item.price * item.verified_quantity
+                                        ) }}
+
+                                    {% else %}
+
+                                        —
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- ORIGINAL TOTAL -->
+
+                <div class="row justify-content-end mt-4">
+
+                    <div class="col-md-5">
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span class="text-muted">
+                                Customer Submitted Total
+                            </span>
+
+                            <strong>
+                                ₦{{ "{:,.0f}".format(order.submitted_total) }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="d-flex justify-content-between">
+
+                            <span class="text-muted">
+                                Verified Total
+                            </span>
+
+                            <strong class="fs-4 text-primary">
+
+                                {% if order.verified_total is not none %}
+
+                                    ₦{{ "{:,.0f}".format(order.verified_total) }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ADMIN NOTE -->
+
+                <div class="mt-4">
+
+                    <label class="form-label fw-semibold">
+                        Manager Note
+                    </label>
+
+                    <textarea
+                        name="manager_note"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Add a note about the verification, missing items, damaged items, etc."
+                    >{{ order.manager_note or "" }}</textarea>
+
+                </div>
+
+
+                <!-- ACTIONS -->
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+
+                    <div>
+
+                        <small class="text-muted">
+                            Payment Status
+                        </small>
+
+                        <div>
+
+                            {% if order.payment_status == "PAID" %}
+
+                                <span class="badge bg-success">
+                                    Paid
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    Unpaid
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary px-4">
+
+                        <i class="fas fa-check me-2"></i>
+
+                        Save Verification
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+<!-- ADMIN STATUS CONTROL -->
+
+<div class="card border-0 shadow-sm mb-4">
+
+    <div class="card-body p-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+
+                <h4 class="mb-1">
+                    Update Order Status
+                </h4>
+
+                <p class="text-muted mb-0">
+                    Move this order through the laundry workflow.
+                </p>
+
+            </div>
+
+            <div>
+
+                <small class="text-muted d-block">
+                    CURRENT STATUS
+                </small>
+
+                <span class="badge bg-primary mt-1">
+                    {{ order.order_status }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'update_order_status',
+                order_id=order.id
+            ) }}"
+        >
+
+            <div class="row g-3 align-items-end">
+
+                <div class="col-md-8">
+
+                    <label
+                        for="order_status"
+                        class="form-label fw-semibold"
+                    >
+                        New Order Status
+                    </label>
+
+                    <select
+                        name="order_status"
+                        id="order_status"
+                        class="form-select"
+                        required
+                    >
+
+                        <option value="">
+                            Select new status
+                        </option>
+
+                        <option value="Pending Pickup">
+                            Pending Pickup
+                        </option>
+
+                        <option value="Picked Up">
+                            Picked Up
+                        </option>
+
+                        <option value="Verification In Progress">
+                            Verification In Progress
+                        </option>
+
+                        <option value="Awaiting Customer Approval">
+                            Awaiting Customer Approval
+                        </option>
+
+                        <option value="Verified">
+                            Verified
+                        </option>
+
+                        <option value="Washing">
+                            Washing
+                        </option>
+
+                        <option value="Ironing">
+                            Ironing
+                        </option>
+
+                        <option value="Ready For Payment">
+                            Ready For Payment
+                        </option>
+
+                        <option value="Paid">
+                            Paid
+                        </option>
+
+                        <option value="Ready For Delivery">
+                            Ready For Delivery
+                        </option>
+
+                        <option value="Out For Delivery">
+                            Out For Delivery
+                        </option>
+
+                        <option value="Delivered">
+                            Delivered
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary w-100"
+                    >
+
+                        <i class="fas fa-arrows-rotate me-2"></i>
+
+                        Update Status
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+
+        <!-- STATUS RULES -->
+
+        <div class="alert alert-light border mt-4 mb-0">
+
+            <small>
+
+                <strong>Status rules:</strong>
+
+                Customer approval is required before an order
+                can become <strong>Verified</strong>.
+
+                Payment confirmation is required before an order
+                can become <strong>Paid</strong>.
+
+            </small>
+
+        </div>
+
+    </div>
+
+</div>
+
+    <!-- ORDER TIMELINE -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-4">
+
+            <h5 class="mb-4">
+                Order Status
+            </h5>
+
+
+            <div class="row g-3">
+
+                {% set statuses = [
+                    "Pending Pickup",
+                    "Picked Up",
+                    "Verification In Progress",
+                    "Awaiting Customer Approval",
+                    "Verified",
+                    "Washing",
+                    "Ironing",
+                    "Ready For Payment",
+                    "Paid",
+                    "Ready For Delivery",
+                    "Out For Delivery",
+                    "Delivered"
+                ] %}
+
+
+                {% for status in statuses %}
+
+                    <div class="col-md-3 col-lg-2">
+
+                        {% if status == order.order_status %}
+
+                            <div class="border rounded p-3 text-center bg-primary text-white">
+
+                                <i class="fas fa-circle-check mb-2"></i>
+
+                                <div class="small fw-semibold">
+                                    {{ status }}
+                                </div>
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="border rounded p-3 text-center">
+
+                                <div class="small text-muted">
+                                    {{ status }}
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
