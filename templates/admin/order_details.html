@@ -237,6 +237,7 @@ Order #{{ order.id }} | Admin | Errandly
 
 
             <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                 <div class="table-responsive">
 
@@ -505,6 +506,7 @@ Order #{{ order.id }} | Admin | Errandly
                 order_id=order.id
             ) }}"
         >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <div class="row g-3 align-items-end">
 

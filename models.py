@@ -207,7 +207,7 @@ class OrderItem(db.Model):
     order = db.relationship(
     "LaundryOrder",
     backref=db.backref(
-        "order_items",
+        "items",
         lazy=True,
         cascade="all, delete-orphan"
     )

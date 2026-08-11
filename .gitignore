@@ -1,0 +1,28 @@
+# Environment variables / secrets - never commit these
+.env
+.env.local
+.env.*.local
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Database
+instance/
+*.db
+*.sqlite
+*.sqlite3
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

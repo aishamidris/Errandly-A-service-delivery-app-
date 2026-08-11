@@ -37,6 +37,7 @@ Errandly | Add Laundry Items
         <!-- Order Form -->
 
         <form method="POST">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <div class="row g-4">
 

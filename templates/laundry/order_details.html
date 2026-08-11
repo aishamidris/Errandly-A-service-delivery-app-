@@ -675,6 +675,7 @@ Laundry Order #{{ order.id }} | Errandly
                                 order_id=order.id
                             ) }}"
                         >
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                             <button
                                 type="submit"

@@ -1,13 +1,19 @@
 from flask import Flask, render_template, redirect, url_for, flash, request, session, abort
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_wtf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, LaundryOrder, OrderItem, ORDER_STATUS, Notification
 from constants import LAUNDRY_PRICES, SERVICE_TYPES, PAYMENT_STATUS
 from forms import RegisterForm, LoginForm, LaundryOrderForm
 from datetime import datetime, timedelta
 from functools import wraps
+from dotenv import load_dotenv
 import requests
 import os
+
+# Load variables from .env into the environment.
+# Must run before anything below reads os.environ.get(...).
+load_dotenv()
 
 
 app = Flask(__name__)
@@ -17,11 +23,45 @@ app = Flask(__name__)
 # APP CONFIGURATION
 # =========================
 
-app.config["SECRET_KEY"] = "change-this-secret-key"
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///errandly.db"
+if not app.config["SECRET_KEY"]:
+    raise RuntimeError(
+        "SECRET_KEY is not set. Create a .env file (see .env.example) "
+        "and set SECRET_KEY before running the app."
+    )
+
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+    "DATABASE_URL", "sqlite:///errandly.db"
+)
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+# =========================
+# SESSION / COOKIE SECURITY
+# =========================
+
+# Prevents JavaScript from reading the session cookie (mitigates XSS
+# stealing a logged-in session).
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+
+# Blocks the cookie from being sent on cross-site requests, which is
+# a second layer of CSRF defense alongside CSRFProtect above.
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+
+# Only send the cookie over HTTPS. Set SESSION_COOKIE_SECURE=True in
+# your production .env once you're deployed behind HTTPS - leave it
+# False for local http://127.0.0.1 development, or your session
+# cookie will never be sent and you'll get logged out immediately.
+app.config["SESSION_COOKIE_SECURE"] = os.environ.get(
+    "SESSION_COOKIE_SECURE", "False"
+) == "True"
+
+# Debug mode must be explicitly opted into - never default to on.
+# debug=True exposes a live Python console (the Werkzeug debugger)
+# to anyone who can trigger a 500 error, which is a remote code
+# execution risk if this ever runs on a public server.
+app.config["DEBUG"] = os.environ.get("FLASK_DEBUG", "False") == "True"
 
 # =========================
 # PAYSTACK CONFIGURATION
@@ -40,6 +80,18 @@ PAYSTACK_VERIFY_URL = ("https://api.paystack.co/transaction/verify/{}")
 # =========================
 
 db.init_app(app)
+
+
+# =========================
+# ENABLE APP-WIDE CSRF PROTECTION
+# =========================
+# This protects every POST/PUT/PATCH/DELETE route, including ones
+# like /laundry/<service_type>/items that read raw request.form
+# instead of going through a FlaskForm object. Without this, those
+# routes have no CSRF protection even though your FlaskForm-based
+# routes (register, login) are protected automatically.
+
+csrf = CSRFProtect(app)
 
 
 # =========================
@@ -729,7 +781,7 @@ def approve_order(order_id):
         "success"
     )
 
-    return redirect(url_for("_order_details", order_id=order.id)
+    return redirect(url_for("order_details", order_id=order.id)
     )
 
 
@@ -761,7 +813,10 @@ def laundry_items(service_type):
 
         for item_name, price in service_prices.items():
 
-            quantity = int(request.form.get(item_name, 0))
+            try:
+                quantity = int(request.form.get(item_name, 0))
+            except (TypeError, ValueError):
+                quantity = 0
 
             if quantity > 0:
 
@@ -1070,4 +1125,4 @@ with app.app_context():
 
 if __name__ == "__main__":
 
-    app.run(debug=True)
+    app.run(debug=app.config["DEBUG"])
