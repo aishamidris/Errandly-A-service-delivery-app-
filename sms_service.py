@@ -56,7 +56,6 @@ def format_nigerian_number(phone):
     if phone.startswith("234"):
         return "+" + phone
 
-    # Fallback: assume it's missing the country code entirely
     return "+234" + phone
 
 

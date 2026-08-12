@@ -77,10 +77,26 @@
 
                    {% if current_user.is_authenticated %}
 
-                        <a href="{{ url_for('dashboard') }}"
-                            class="nav-link">
-                                Dashboard
-                        </a>
+                        {% if current_user.role == "admin" %}
+
+                            <a href="{{ url_for('admin_dashboard') }}"
+                                class="nav-link">
+                                    Admin Dashboard
+                            </a>
+
+                            <a href="{{ url_for('admin_services') }}"
+                                class="nav-link">
+                                    Manage Pricing
+                            </a>
+
+                        {% else %}
+
+                            <a href="{{ url_for('dashboard') }}"
+                                class="nav-link">
+                                    Dashboard
+                            </a>
+
+                        {% endif %}
 
                         <span class="navbar-text me-3">
                             Welcome, {{ current_user.name }}

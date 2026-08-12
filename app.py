@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, url_for, flash, request, ses
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_wtf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, LaundryOrder, OrderItem, ORDER_STATUS, Notification
+from models import db, User, LaundryOrder, OrderItem, ORDER_STATUS, Notification, ServiceItem
 from constants import LAUNDRY_PRICES, SERVICE_TYPES, PAYMENT_STATUS
 from forms import RegisterForm, LoginForm, LaundryOrderForm
 from datetime import datetime, timedelta
@@ -803,7 +803,21 @@ def laundry_items(service_type):
         flash("Invalid laundry service selected.", "danger")
         return redirect(url_for("laundry"))
 
-    service_prices = LAUNDRY_PRICES[service_type]
+    # Pull live, active prices from the database instead of the
+    # hardcoded LAUNDRY_PRICES dict. Admin-edited prices and newly
+    # added items show up here immediately; deactivated items don't.
+    service_items = ServiceItem.query.filter_by(
+        service_type=service_type,
+        is_active=True
+    ).order_by(ServiceItem.display_name).all()
+
+    if not service_items:
+        flash(
+            "This service currently has no items available. "
+            "Please check back later.",
+            "warning"
+        )
+        return redirect(url_for("laundry"))
 
     if request.method == "POST":
 
@@ -811,23 +825,24 @@ def laundry_items(service_type):
 
         total_price = 0
 
-        for item_name, price in service_prices.items():
+        for service_item in service_items:
 
             try:
-                quantity = int(request.form.get(item_name, 0))
+                quantity = int(request.form.get(service_item.item_name, 0))
             except (TypeError, ValueError):
                 quantity = 0
 
             if quantity > 0:
 
                 selected_items.append({
-                    "item_name": item_name,
+                    "item_name": service_item.item_name,
+                    "display_name": service_item.display_name,
                     "quantity": quantity,
-                    "price": price,
-                    "subtotal": quantity * price
+                    "price": service_item.price,
+                    "subtotal": quantity * service_item.price
                 })
 
-                total_price += quantity * price
+                total_price += quantity * service_item.price
 
         if not selected_items:
 
@@ -839,7 +854,7 @@ def laundry_items(service_type):
             return render_template(
                 "laundry/items.html",
                 service_type=service_type,
-                service_prices=service_prices
+                service_items=service_items
             )
 
         # Store the order temporarily in the session
@@ -854,7 +869,7 @@ def laundry_items(service_type):
     return render_template(
         "laundry/items.html",
         service_type=service_type,
-        service_prices=service_prices
+        service_items=service_items
     )
 
 
@@ -1088,6 +1103,148 @@ def subscription():
         "laundry/subscription.html"
     )
 
+# ==========================================================
+# ADMIN - LAUNDRY SERVICE / PRICING MANAGEMENT
+# ==========================================================
+
+@app.route("/admin/services")
+@admin_required
+def admin_services():
+
+    items = ServiceItem.query.order_by(
+        ServiceItem.service_type,
+        ServiceItem.display_name
+    ).all()
+
+    # Group items by service_type so the template can render
+    # separate sections for "pressing" and "wash_press".
+    grouped_items = {}
+
+    for item in items:
+        grouped_items.setdefault(item.service_type, []).append(item)
+
+    return render_template(
+        "admin/services.html",
+        grouped_items=grouped_items,
+        service_types=SERVICE_TYPES
+    )
+
+
+@app.route("/admin/services/add", methods=["POST"])
+@admin_required
+def admin_add_service_item():
+
+    service_type = request.form.get("service_type", "").strip()
+
+    display_name = request.form.get("display_name", "").strip()
+
+    price_string = request.form.get("price", "").strip()
+
+    if service_type not in ("pressing", "wash_press"):
+        flash("Please select a valid service type.", "danger")
+        return redirect(url_for("admin_services"))
+
+    if not display_name:
+        flash("Please enter an item name.", "danger")
+        return redirect(url_for("admin_services"))
+
+    try:
+        price = int(price_string)
+        if price < 0:
+            raise ValueError
+
+    except (TypeError, ValueError):
+        flash("Please enter a valid price.", "danger")
+        return redirect(url_for("admin_services"))
+
+    # Derive a stable internal key from the display name, e.g.
+    # "Jeans / Sweatpants" -> "jeans_sweatpants"
+    item_name = (
+        display_name.lower()
+        .replace("/", " ")
+        .replace("-", " ")
+    )
+    item_name = "_".join(item_name.split())
+
+    existing = ServiceItem.query.filter_by(
+        service_type=service_type,
+        item_name=item_name
+    ).first()
+
+    if existing:
+        flash(
+            f'"{display_name}" already exists under this service. '
+            "Edit the existing item instead.",
+            "danger"
+        )
+        return redirect(url_for("admin_services"))
+
+    new_item = ServiceItem(
+        service_type=service_type,
+        item_name=item_name,
+        display_name=display_name,
+        price=price,
+        is_active=True
+    )
+
+    db.session.add(new_item)
+    db.session.commit()
+
+    flash(f'"{display_name}" added successfully.', "success")
+
+    return redirect(url_for("admin_services"))
+
+
+@app.route("/admin/services/<int:item_id>/edit", methods=["POST"])
+@admin_required
+def admin_edit_service_item(item_id):
+
+    item = db.get_or_404(ServiceItem, item_id)
+
+    display_name = request.form.get("display_name", "").strip()
+
+    price_string = request.form.get("price", "").strip()
+
+    if not display_name:
+        flash("Item name cannot be empty.", "danger")
+        return redirect(url_for("admin_services"))
+
+    try:
+        price = int(price_string)
+        if price < 0:
+            raise ValueError
+
+    except (TypeError, ValueError):
+        flash("Please enter a valid price.", "danger")
+        return redirect(url_for("admin_services"))
+
+    item.display_name = display_name
+    item.price = price
+
+    db.session.commit()
+
+    flash(f'"{item.display_name}" updated successfully.', "success")
+
+    return redirect(url_for("admin_services"))
+
+
+@app.route("/admin/services/<int:item_id>/toggle", methods=["POST"])
+@admin_required
+def admin_toggle_service_item(item_id):
+
+    item = db.get_or_404(ServiceItem, item_id)
+
+    item.is_active = not item.is_active
+
+    db.session.commit()
+
+    status = "activated" if item.is_active else "deactivated"
+
+    flash(f'"{item.display_name}" {status}.', "success")
+
+    return redirect(url_for("admin_services"))
+
+
 @app.route("/notifications")
 @login_required
 def notifications():
@@ -1117,6 +1274,26 @@ def notifications():
 with app.app_context():
 
     db.create_all()
+
+    # One-time seed: if the service_items table is empty, populate
+    # it from the LAUNDRY_PRICES dict in constants.py. After this
+    # runs once, LAUNDRY_PRICES is no longer read for pricing -
+    # everything after this point is managed from /admin/services.
+    if ServiceItem.query.count() == 0:
+
+        for service_type, items in LAUNDRY_PRICES.items():
+
+            for item_name, price in items.items():
+
+                db.session.add(ServiceItem(
+                    service_type=service_type,
+                    item_name=item_name,
+                    display_name=item_name.replace("_", " ").title(),
+                    price=price,
+                    is_active=True
+                ))
+
+        db.session.commit()
 
 
 # =========================

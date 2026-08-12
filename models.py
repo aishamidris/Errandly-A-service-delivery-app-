@@ -253,3 +253,70 @@ class Notification(db.Model):
         "User",
         back_populates="notifications"
     )
+
+
+# ==========================================
+# SERVICE ITEM (admin-editable laundry pricing)
+# ==========================================
+# Replaces the hardcoded LAUNDRY_PRICES dict in constants.py.
+# Admin can add new items, edit prices, and deactivate items
+# without touching code. Deactivated items stop showing up for
+# customers but stay in the table (past orders still reference
+# the item_name/price they had at time of order, via OrderItem,
+# so deactivating never breaks order history).
+
+class ServiceItem(db.Model):
+    __tablename__ = "service_items"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    # "pressing" or "wash_press" - matches LaundryOrder.service_type
+    service_type = db.Column(
+        db.String(30),
+        nullable=False
+    )
+
+    # Internal key used as the HTML form field name and stored on
+    # OrderItem.item_name, e.g. "shirts", "jeans_sweatpants"
+    item_name = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    # What the customer actually sees, e.g. "Jeans / Sweatpants"
+    display_name = db.Column(
+        db.String(150),
+        nullable=False
+    )
+
+    price = db.Column(
+        db.Integer,
+        nullable=False
+    )
+
+    is_active = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=True
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
+
+    updated_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow
+    )
+
+    __table_args__ = (
+        db.UniqueConstraint(
+            "service_type", "item_name",
+            name="uq_service_type_item_name"
+        ),
+    )

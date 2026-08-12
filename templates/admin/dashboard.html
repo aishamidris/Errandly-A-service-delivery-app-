@@ -192,7 +192,7 @@ Admin Dashboard | Errandly
 
         <!-- LAUNDRY ORDERS -->
 
-        <div class="col-lg-4">
+        <div class="col-lg-3">
 
             <div class="card border-0 shadow-sm h-100">
 
@@ -209,9 +209,9 @@ Admin Dashboard | Errandly
                         verify items and update order statuses.
                     </p>
 
-                    <a href="{{ url_for('admin_customers') }}"
+                    <a href="#orders"
                         class="btn btn-success">
-                            Manage Customers
+                            View Orders
                     </a>
 
                 </div>
@@ -223,7 +223,7 @@ Admin Dashboard | Errandly
 
         <!-- CUSTOMERS -->
 
-        <div class="col-lg-4">
+        <div class="col-lg-3">
 
             <div class="card border-0 shadow-sm h-100">
 
@@ -240,14 +240,41 @@ Admin Dashboard | Errandly
                         laundry order history.
                     </p>
 
-                    <button
-                        class="btn btn-success"
-                        type="button"
-                        disabled>
+                    <a href="{{ url_for('admin_customers') }}"
+                        class="btn btn-success">
+                            Manage Customers
+                    </a>
 
-                        Coming Soon
+                </div>
 
-                    </button>
+            </div>
+
+        </div>
+
+
+        <!-- PRICING -->
+
+        <div class="col-lg-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <i class="fa-solid fa-tags fa-2x text-info mb-3"></i>
+
+                    <h4>
+                        Pricing
+                    </h4>
+
+                    <p class="text-muted">
+                        Add new laundry items, edit prices, or
+                        deactivate items customers shouldn't see.
+                    </p>
+
+                    <a href="{{ url_for('admin_services') }}"
+                        class="btn btn-info text-white">
+                            Manage Pricing
+                    </a>
 
                 </div>
 
@@ -258,7 +285,7 @@ Admin Dashboard | Errandly
 
         <!-- PAYMENTS -->
 
-        <div class="col-lg-4">
+        <div class="col-lg-3">
 
             <div class="card border-0 shadow-sm h-100">
 

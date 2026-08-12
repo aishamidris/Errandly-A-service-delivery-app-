@@ -73,7 +73,7 @@ Errandly | Add Laundry Items
 
                             <div class="row g-3">
 
-                                {% for item_name, price in service_prices.items() %}
+                                {% for service_item in service_items %}
 
                                 <div class="col-md-6">
 
@@ -84,11 +84,11 @@ Errandly | Add Laundry Items
                                             <div>
 
                                                 <h6 class="fw-bold mb-1">
-                                                    {{ item_name.replace("_", " ").title() }}
+                                                    {{ service_item.display_name }}
                                                 </h6>
 
                                                 <small class="text-muted">
-                                                    ₦{{ "{:,}".format(price) }} each
+                                                    ₦{{ "{:,}".format(service_item.price) }} each
                                                 </small>
 
                                             </div>
@@ -104,11 +104,11 @@ Errandly | Add Laundry Items
 
                                             <input
                                                 type="number"
-                                                name="{{ item_name }}"
+                                                name="{{ service_item.item_name }}"
                                                 class="form-control quantity-input"
                                                 value="0"
                                                 min="0"
-                                                data-price="{{ price }}"
+                                                data-price="{{ service_item.price }}"
                                                 style="max-width: 100px;"
                                             >
 
