@@ -22,10 +22,10 @@ JavaScript
 Bootstrap
 
 Development progress:
-[x] Landing page
-[x] Authentication
-[ ] Customer dashboard
-[ ] Laundry ordering
-[ ] Admin dashboard
+[✓] Landing page
+[✓] Authentication
+[✓] Customer dashboard
+[✓] Laundry ordering
+[✓] Admin dashboard
 [ ] Staff dashboard
 [ ] Errand system
