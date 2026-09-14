@@ -74,7 +74,7 @@ Payment | Errandly
 
                         <h3 class="mb-0">
 
-                            ₦{{ "{:,.0f}".format(order.submitted_total) }}
+                            ₦{{ "{:,.0f}".format(order.verified_total or order.submitted_total) }}
 
                         </h3>
 
@@ -90,7 +90,7 @@ Payment | Errandly
 
                             <i class="fas fa-lock me-2"></i>
 
-                            Pay ₦{{ "{:,.0f}".format(order.submitted_total) }}
+                            Pay ₦{{ "{:,.0f}".format(order.verified_total or order.submitted_total) }} with Paystack
 
                         </button>
 
@@ -103,7 +103,8 @@ Payment | Errandly
 
                             <i class="fas fa-shield-halved me-1"></i>
 
-                            Secure payment powered by Errandly
+                            You'll be redirected to Paystack's secure
+                            checkout to complete this payment.
 
                         </small>
 

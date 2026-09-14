@@ -433,6 +433,15 @@ Order #{{ order.id }} | Admin | Errandly
                                     Paid
                                 </span>
 
+                            {% elif order.payment_reference %}
+
+                                <span
+                                    class="badge bg-warning text-dark"
+                                    title="Customer started a Paystack checkout but it hasn't completed yet."
+                                >
+                                    Payment Attempted
+                                </span>
+
                             {% else %}
 
                                 <span class="badge bg-secondary">

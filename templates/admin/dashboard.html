@@ -660,6 +660,16 @@ Admin Dashboard | Errandly
                                             Paid
                                         </span>
 
+                                    {% elif order.payment_reference %}
+
+                                        <span
+                                            class="badge bg-warning text-dark"
+                                            title="Customer started a Paystack checkout for this order but it hasn't completed yet."
+                                        >
+                                            <i class="fas fa-clock me-1"></i>
+                                            Payment Attempted
+                                        </span>
+
                                     {% else %}
 
                                         <span class="badge bg-secondary">

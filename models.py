@@ -130,6 +130,19 @@ class LaundryOrder(db.Model):
         default="UNPAID"
     )
 
+    # Paystack transaction reference for this order's payment attempt.
+    # Set when a payment is initialized, used to verify the transaction
+    # on callback. A new reference is generated on each retry.
+    payment_reference = db.Column(
+        db.String(100),
+        nullable=True
+    )
+
+    paid_at = db.Column(
+        db.DateTime,
+        nullable=True
+    )
+
     order_status = db.Column(
         db.String(40),
         nullable=False,
@@ -227,6 +240,16 @@ class Notification(db.Model):
         db.Integer,
         db.ForeignKey("users.id"),
         nullable=False
+    )
+
+    # Optional link back to the laundry order this notification is
+    # about, so the notifications page can take the customer straight
+    # to the relevant order instead of dead-ending. Nullable because
+    # not every notification is order-related.
+    order_id = db.Column(
+        db.Integer,
+        db.ForeignKey("laundry_orders.id"),
+        nullable=True
     )
 
     title = db.Column(

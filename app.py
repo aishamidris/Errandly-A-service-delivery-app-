@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, LaundryOrder, OrderItem, ORDER_STATUS, Notification, ServiceItem
 from constants import LAUNDRY_PRICES, SERVICE_TYPES, PAYMENT_STATUS
 from forms import RegisterForm, LoginForm, LaundryOrderForm
+import paystack_service
 from datetime import datetime, timedelta
 from functools import wraps
 from dotenv import load_dotenv
@@ -31,9 +32,16 @@ if not app.config["SECRET_KEY"]:
         "and set SECRET_KEY before running the app."
     )
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-    "DATABASE_URL", "sqlite:///errandly.db"
-)
+database_url = os.environ.get("DATABASE_URL", "sqlite:///errandly.db")
+
+# Some providers (Neon, old Heroku-style URLs) hand out a connection
+# string starting with "postgres://", but SQLAlchemy 2.x only
+# recognizes "postgresql://" - swap it so DATABASE_URL works as-is
+# without needing to hand-edit whatever your host gives you.
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -70,10 +78,6 @@ app.config["DEBUG"] = os.environ.get("FLASK_DEBUG", "False") == "True"
 app.config["PAYSTACK_SECRET_KEY"] = os.environ.get("PAYSTACK_SECRET_KEY")
 
 app.config["PAYSTACK_PUBLIC_KEY"] = os.environ.get("PAYSTACK_PUBLIC_KEY")
-
-PAYSTACK_INITIALIZE_URL = ("https://api.paystack.co/transaction/initialize")
-
-PAYSTACK_VERIFY_URL = ("https://api.paystack.co/transaction/verify/{}")
 
 # =========================
 # INITIALIZE DATABASE
@@ -159,7 +163,8 @@ def admin_required(f):
 def create_notification(
     user_id,
     title,
-    message
+    message,
+    order_id=None
 ):
 
     notification = Notification(
@@ -168,7 +173,9 @@ def create_notification(
 
         title=title,
 
-        message=message
+        message=message,
+
+        order_id=order_id
 
     )
 
@@ -326,41 +333,181 @@ def payment(order_id):
 
     if request.method == "POST":
 
-        # TEMPORARY PAYMENT SIMULATION
-        # We will replace this with Paystack.
+        callback_url = url_for("payment_callback", _external=True)
 
-        order.payment_status = "PAID"
-
-        order.order_status = "Paid"
-
-        create_notification(
-
-                current_user.id,
-
-                "Payment Successful",
-
-                f"Payment for Order #{order.id} was received successfully."
-
+        try:
+            authorization_url, reference = paystack_service.initialize_transaction(
+                order, callback_url
             )
 
+        except paystack_service.PaystackError as e:
+
+            flash(f"Could not start payment: {e}", "danger")
+
+            return redirect(
+                url_for("payment", order_id=order.id)
+            )
+
+        # Save the reference so the callback can look this order back up
+        order.payment_reference = reference
         db.session.commit()
 
+        return redirect(authorization_url)
+
+    return render_template(
+        "payments.html",
+        order=order
+    )
+
+
+def mark_order_paid(order, transaction_amount_kobo):
+    """
+    Shared "confirm this order is paid" logic, used by both the
+    browser-redirect callback (payment_callback) and the
+    server-to-server webhook (payment_webhook) - whichever one hears
+    about a successful payment first wins, and the other becomes a
+    safe no-op. That matters because the browser redirect alone is
+    unreliable: if a customer pays on Paystack's page and then closes
+    the tab instead of waiting to be redirected back, payment_callback
+    never runs and the order would stay "Unpaid" forever without the
+    webhook as a backstop.
+
+    Returns one of:
+      "paid"          - just marked paid
+      "already_paid"  - no-op, some earlier call already handled this
+      "mismatch"      - amount didn't match what we expected; not marked
+    """
+
+    if order.payment_status == "PAID":
+        return "already_paid"
+
+    expected_kobo = (
+        order.verified_total or order.submitted_total
+    ) * paystack_service.KOBO_PER_NAIRA
+
+    if transaction_amount_kobo != expected_kobo:
+        return "mismatch"
+
+    order.payment_status = "PAID"
+    order.order_status = "Paid"
+    order.paid_at = datetime.utcnow()
+
+    create_notification(
+        order.user_id,
+        "Payment Successful",
+        f"Payment for Order #{order.id} was received successfully.",
+        order_id=order.id
+    )
+
+    db.session.commit()
+
+    return "paid"
+
+
+@app.route("/payment/callback")
+@login_required
+def payment_callback():
+
+    reference = request.args.get("reference")
+
+    if not reference:
+        flash("Payment reference missing.", "danger")
+        return redirect(url_for("dashboard"))
+
+    order = LaundryOrder.query.filter_by(
+        payment_reference=reference
+    ).first()
+
+    if not order:
+        flash("We couldn't find this payment.", "danger")
+        return redirect(url_for("dashboard"))
+
+    if order.user_id != current_user.id:
+        flash("You are not authorized to view this payment.", "danger")
+        return redirect(url_for("dashboard"))
+
+    # Already processed - either the customer refreshed this page, or
+    # the webhook beat us to it. Either way, nothing left to do.
+    if order.payment_status == "PAID":
+        flash("This order has already been paid for.", "info")
+        return redirect(
+            url_for("order_details", order_id=order.id)
+        )
+
+    try:
+        transaction = paystack_service.verify_transaction(reference)
+
+    except paystack_service.PaystackError as e:
+
+        flash(f"Payment could not be verified: {e}", "danger")
+
+        return redirect(
+            url_for("payment", order_id=order.id)
+        )
+
+    result = mark_order_paid(order, transaction.get("amount"))
+
+    if result == "mismatch":
+
         flash(
-            "Payment successful!",
-            "success"
+            "Payment amount mismatch. Please contact support.",
+            "danger"
         )
 
         return redirect(
-            url_for(
-                "order_details",
-                order_id=order.id
-            )
+            url_for("payment", order_id=order.id)
         )
 
-    return render_template(
-        "payment.html",
-        order=order
+    flash("Payment successful!", "success")
+
+    return redirect(
+        url_for("order_details", order_id=order.id)
     )
+
+
+@app.route("/payment/webhook", methods=["POST"])
+@csrf.exempt
+def payment_webhook():
+    """
+    Server-to-server endpoint Paystack calls directly when a payment
+    succeeds, independent of whether the customer's browser ever made
+    it back to /payment/callback. Register this URL (yourdomain.com
+    /payment/webhook) in the Paystack dashboard under
+    Settings -> API Keys & Webhooks.
+
+    Exempt from CSRF protection because Paystack's server can't send
+    a CSRF token - the HMAC signature check below is what verifies
+    this request is genuinely from Paystack instead.
+    """
+
+    raw_body = request.get_data()
+
+    signature = request.headers.get("x-paystack-signature", "")
+
+    if not paystack_service.verify_webhook_signature(raw_body, signature):
+        # Not signed with our secret key - reject without processing.
+        abort(401)
+
+    event = request.get_json(silent=True) or {}
+
+    # We only act on successful charges; acknowledge everything else
+    # so Paystack doesn't keep retrying events we don't handle.
+    if event.get("event") != "charge.success":
+        return "", 200
+
+    data = event.get("data", {})
+
+    order = LaundryOrder.query.filter_by(
+        payment_reference=data.get("reference")
+    ).first()
+
+    if order:
+        mark_order_paid(order, data.get("amount"))
+
+    # Always 200 once the signature checks out - Paystack retries on
+    # non-2xx responses, and a retry won't fix a reference we don't
+    # recognize.
+    return "", 200
 
 
 @app.route("/admin")
@@ -504,7 +651,7 @@ def admin_order_details(order_id):
 
         order.order_status = "Awaiting Customer Approval"
 
-        create_notification(order.user_id, "Laundry Verification Complete", f"Order #{order.id} has been verified. Please review and approve it.")
+        create_notification(order.user_id, "Laundry Verification Complete", f"Order #{order.id} has been verified. Please review and approve it.", order_id=order.id)
 
         db.session.commit()
 
@@ -613,7 +760,9 @@ def update_order_status(order_id):
         notification_messages.get(
             new_status,
             f"Your order status changed to {new_status}."
-        )
+        ),
+
+        order_id=order.id
 
     )
 
@@ -770,7 +919,9 @@ def approve_order(order_id):
 
     "Verification Approved",
 
-    f"You approved the verification for Order #{order.id}. Your laundry will now be processed."
+    f"You approved the verification for Order #{order.id}. Your laundry will now be processed.",
+
+    order_id=order.id
 
         )
 
@@ -1029,7 +1180,9 @@ def laundry_review():
 
         "Laundry Order Created",
 
-        f"Your laundry order #{new_order.id} has been received successfully."
+        f"Your laundry order #{new_order.id} has been received successfully.",
+
+        order_id=new_order.id
 
     )
 
@@ -1091,7 +1244,8 @@ def order_details(order_id):
 
     return render_template(
         "laundry/order_details.html",
-        order=order
+        order=order,
+        order_statuses=ORDER_STATUS
     )
 
 
